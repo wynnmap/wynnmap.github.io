@@ -1,4 +1,4 @@
-import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor } from './utils.js';
+import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor, getFadeAlpha } from './utils.js';
 const SHOW_TIME_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
@@ -58,20 +58,34 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-        if (scale > SHOW_NAME_THRESHOLD) {
+        // Guild Prefix fade
+        let prefixAlpha = getFadeAlpha(scale, SHOW_NAME_THRESHOLD);
+
+        if (prefixAlpha > 0) {
             let textY = screenY;
             if (scale > SHOW_TIME_THRESHOLD) {
                 textY = screenY - 10;
             }
-            drawOutlinedText(ctx, t.guildPrefix, screenX, textY, "16px Minecraft, monospace");
+            drawOutlinedText(ctx, t.guildPrefix, screenX, textY, "16px Minecraft, monospace", `rgba(255,255,255,${prefixAlpha})`, prefixAlpha);
         }
 
-        if (scale > SHOW_TIME_THRESHOLD) {
-            const heldFor = getTimeDiffString(t.acquiredDate)
-            drawOutlinedText(ctx, heldFor, screenX, screenY + 10, "12px Minecraft, monospace", getTreasuryColor(t.acquiredDate));
+        // Treasury fade
+        let treasuryAlpha = getFadeAlpha(scale, SHOW_TIME_THRESHOLD);
 
+        if (treasuryAlpha > 0) {
+            const heldFor = getTimeDiffString(t.acquiredDate);
+            const treasuryColor = getTreasuryColor(t.acquiredDate);
+
+            // Convert treasury color hex to rgba with alpha
+            const r = parseInt(treasuryColor.slice(1, 3), 16);
+            const g = parseInt(treasuryColor.slice(3, 5), 16);
+            const b = parseInt(treasuryColor.slice(5, 7), 16);
+            const rgba = `rgba(${r},${g},${b},${treasuryAlpha})`;
+
+            drawOutlinedText(ctx, heldFor, screenX, screenY + 10, "12px Minecraft, monospace", rgba, treasuryAlpha);
         }
     }
+
 
     ctx.restore();
 }

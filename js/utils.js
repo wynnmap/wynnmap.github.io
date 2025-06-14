@@ -1,5 +1,6 @@
 const MAP_WIDTH = 1009;
 const MAP_HEIGHT = 1604;
+const FADE_DISTANCE = 0.2;
 
 export { MAP_WIDTH, MAP_HEIGHT };
 
@@ -37,13 +38,16 @@ export function toCanvasCoords(x_ingame, z_ingame) {
     return { x: x_canvas, y: y_canvas };
 }
 
-export function drawOutlinedText(ctx, text, x, y, font, fillColor = "#fff", outlineColor = "#000", outlineWidth = 3) {
+export function drawOutlinedText(ctx, text, x, y, font, color = `rgba(255,255,255,255)`, alpha = 1.0, outlineWidth = 3) {
     ctx.font = font;
     ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
     ctx.lineWidth = outlineWidth;
-    ctx.strokeStyle = outlineColor;
+    ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
     ctx.strokeText(text, x, y);
-    ctx.fillStyle = fillColor;
+
+    ctx.fillStyle = color;  // color is already rgba
     ctx.fillText(text, x, y);
 }
 
@@ -62,3 +66,7 @@ export function getTreasuryColor(acquiredDate) {
     }
 }
 
+export function getFadeAlpha(scale, threshold, fadeDistance = FADE_DISTANCE) {
+    let alpha = (scale - threshold + fadeDistance) / fadeDistance;
+    return Math.max(0, Math.min(1, alpha));
+}
