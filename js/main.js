@@ -1,4 +1,5 @@
 import { fetchTerritories } from './api.js';
+import { generateTooltip } from './utils.js';
 import { draw } from './draw.js';
 
 const IMAGE_SRC = "assets/map.png";
@@ -105,11 +106,7 @@ function handleHover(e) {
     if (found) {
         tooltip.style.left = e.clientX + 10 + "px";
         tooltip.style.top = e.clientY + 10 + "px";
-        tooltip.innerHTML = `
-            <b>${found.name}</b><br>
-            Guild: ${found.guild} [${found.guildPrefix}]<br>
-            Since: ${new Date(found.acquired).toLocaleString()}
-        `;
+        tooltip.innerHTML = generateTooltip(found)
         tooltip.style.display = "block";
     } else {
         tooltip.style.display = "none";

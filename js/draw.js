@@ -112,7 +112,7 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
             const b = parseInt(treasuryColor.slice(5, 7), 16);
             const rgba = `rgba(${r},${g},${b},${treasuryAlpha})`;
 
-            drawOutlinedText(ctx, heldFor, screenX, screenY + 10, "12px Minecraft, monospace", rgba, treasuryAlpha);
+            drawOutlinedText(ctx, heldFor, screenX, screenY + 10, "12px MinecraftRegular, monospace", rgba, treasuryAlpha);
         }
     }
 

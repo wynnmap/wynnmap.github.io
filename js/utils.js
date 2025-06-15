@@ -144,3 +144,42 @@ export function getTerritoryType(resources, resEmojiMap = RESOURCE_EMOJIS) {
     // Unknown fallback
     return { type: "unknown", icons: [{ glyph: "?", color: "#FFFFFF" }] };
 }
+
+export function generateTooltip(t) {
+    const treasuryColor = getTreasuryColor(t.acquiredDate);
+    const heldFor = getTimeDiffString(t.acquiredDate, true);
+    const { type, icons } = getTerritoryType(t.resources);
+    
+    const resourceAmounts = {
+        emeralds: parseInt(t.resources.emeralds || "0"),
+        ore:      parseInt(t.resources.ore || "0"),
+        crops:    parseInt(t.resources.crops || "0"),
+        fish:     parseInt(t.resources.fish || "0"),
+        wood:     parseInt(t.resources.wood || "0"),
+    };
+
+    // Build resources multiline
+    let resourceLines = Object.entries(resourceAmounts)
+        .filter(([res, amount]) => amount > 0)
+        .map(([res, amount]) => {
+            const emoji = RESOURCE_EMOJIS[res];
+            return `<div style="margin-left: 16px;">
+                <span style="font-family: Icons; color: ${emoji.color}; font-size: 12px;">${emoji.glyph}</span> <span style="color: ${emoji.color}">+${amount}</span>
+            </div>`;
+        }).join("");
+
+    // Build type label dynamically
+    let typeLabel = type.charAt(0).toUpperCase() + type.slice(1);  // Capitalize
+
+    return `
+        <div style="font-family: Minecraft, sans-serif; font-size: 16px;">
+            <b style="font-family: MinecraftBold; font-size: 18px;">${t.name}</b><br>
+            Guild: <span style="color: ${t.color};">${t.guild} [${t.guildPrefix}]</span><br>
+            Time Held: <span style="color: ${treasuryColor};">${heldFor}</span><br>
+            Type: ${typeLabel}<br>
+            Resources:<br>
+            ${resourceLines}
+        </div>
+    `;
+}
+
