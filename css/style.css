@@ -32,3 +32,25 @@ canvas {
     z-index: 10;
     white-space: nowrap;
 }
+
+#map-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-family: Minecraft, sans-serif;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+#map-controls h3 {
+    margin-top: 0;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+#map-controls label {
+    font-size: 14px;
+}
+
