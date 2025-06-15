@@ -1,5 +1,5 @@
-import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor, getFadeAlpha } from './utils.js';
-const SHOW_TIME_THRESHOLD = 2.3;
+import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor, getFadeAlpha, getTerritoryType, hexToRgb } from './utils.js';
+const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
 export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
@@ -63,14 +63,44 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
 
         if (prefixAlpha > 0) {
             let textY = screenY;
-            if (scale > SHOW_TIME_THRESHOLD) {
+            if (scale > SHOW_INFO_THRESHOLD) {
                 textY = screenY - 10;
             }
             drawOutlinedText(ctx, t.guildPrefix, screenX, textY, "16px Minecraft, monospace", `rgba(255,255,255,${prefixAlpha})`, prefixAlpha);
         }
 
+        // Resource type fade
+        let typeAlpha = getFadeAlpha(scale, SHOW_INFO_THRESHOLD);
+
+        if (typeAlpha > 0) {
+            if (t.resources) {
+                const { type, icons } = getTerritoryType(t.resources);
+
+                if (type === "rainbow") {
+                    // 2x2 grid layout for rainbow
+                    const gridSize = 10;
+                    const startX = screenX - gridSize / 2;
+                    const startY = screenY + 25 - gridSize / 2;
+
+                    for (let i = 0; i < icons.length; i++) {
+                        const icon = icons[i];
+                        const dx = startX + (i % 2) * gridSize;
+                        const dy = startY + Math.floor(i / 2) * gridSize + 5;
+                        drawOutlinedText(ctx, icon.glyph, dx, dy, `${gridSize}px Icons`, `rgba(${hexToRgb(icon.color)},${typeAlpha})`, typeAlpha);
+                    }
+                } else {
+                    // normal linear layout
+                    let offsetXIcons = screenX - ((icons.length - 1) * 12);
+                    for (const icon of icons) {
+                        drawOutlinedText(ctx, icon.glyph, offsetXIcons, screenY + 30, "16px Icons", `rgba(${hexToRgb(icon.color)},${typeAlpha})`, typeAlpha);
+                        offsetXIcons += 24;
+                    }
+                }
+            }
+        }
+
         // Treasury fade
-        let treasuryAlpha = getFadeAlpha(scale, SHOW_TIME_THRESHOLD);
+        let treasuryAlpha = getFadeAlpha(scale, SHOW_INFO_THRESHOLD);
 
         if (treasuryAlpha > 0) {
             const heldFor = getTimeDiffString(t.acquiredDate);

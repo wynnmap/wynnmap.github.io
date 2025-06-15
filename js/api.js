@@ -8,13 +8,13 @@ export async function fetchTerritories() {
     const res1 = await axios.get(API1_URL);
     const res2 = await axios.get(API2_URL);
 
-    const data = res1.data.territories;
-    const extraData = res2.data;
+    const data1 = res1.data.territories;
+    const data2 = res2.data;
 
     let territories = {};
 
-    for (const name in data) {
-        const t = data[name];
+    for (const name in data1) {
+        const t = data1[name];
         const loc = t.location;
 
         const topLeft = toCanvasCoords(loc.startX, loc.startZ);
@@ -38,12 +38,12 @@ export async function fetchTerritories() {
         };
     }
 
-    // Merge in the extra trading routes data
-    for (const name in extraData) {
+    // Merge in the trading routes data
+    for (const name in data2) {
         if (territories[name]) {
-            const extra = extraData[name];
-            territories[name].tradingRoutes = extra["Trading Routes"] || [];
-            territories[name].resources = extra.resources || {};
+            const t = data2[name];
+            territories[name].tradingRoutes = t["Trading Routes"] || [];
+            territories[name].resources = t.resources || {};
         }
     }
 
