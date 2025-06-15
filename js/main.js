@@ -1,5 +1,5 @@
 import { fetchTerritories } from './api.js';
-import { generateTooltip } from './utils.js';
+import { generateTooltip, MAP_WIDTH, MAP_HEIGHT } from './utils.js';
 import { draw } from './draw.js';
 
 const IMAGE_SRC = "assets/map.png";
@@ -12,6 +12,9 @@ let territories = [];
 let offsetX = 0;
 let offsetY = 0;
 let scale = 0.75;
+
+offsetX = -(canvas.width - MAP_WIDTH) / 2;
+offsetY = -canvas.height * 1.1;
 
 let isDragging = false;
 let dragStartX = 0;
@@ -31,7 +34,7 @@ image.onload = async () => {
 
     setInterval(() => {
         drawEverything();
-    }, 1000);
+    }, 500);
 };
 
 function drawEverything() {
