@@ -115,10 +115,11 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
                     }
                 } else {
                     // normal linear layout
-                    let offsetXIcons = screenX - ((icons.length - 1) * 12);
+                    const fontSize = icons.length > 1 ? 14 : 16;
+                    let offsetXIcons = screenX - ((icons.length - 1) * 7);
                     for (const icon of icons) {
-                        drawOutlinedText(ctx, icon.glyph, offsetXIcons, textY, "16px Icons", `rgba(${hexToRgb(icon.color)},${typeAlpha})`, typeAlpha);
-                        offsetXIcons += 24;
+                        drawOutlinedText(ctx, icon.glyph, offsetXIcons, textY, `${fontSize}px Icons`, `rgba(${hexToRgb(icon.color)},${typeAlpha})`, typeAlpha);
+                        offsetXIcons += 14;
                     }
                 }
             }
