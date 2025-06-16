@@ -92,6 +92,12 @@ canvas.addEventListener("wheel", (e) => {
     drawEverything();
 });
 
+document.getElementById("menu-toggle").addEventListener("click", () => {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("closed");
+});
+
+
 function handleHover(e) {
     const rect = canvas.getBoundingClientRect();
     const mouseX = (e.clientX - rect.left - offsetX) / scale;
