@@ -2,43 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Wynncraft Live Territory Map</title>
-    <style>
-        @font-face {
-            font-family: "MinecraftRegular";
-            src: url("assets/MinecraftRegular.woff") format("woff");
-        }
-        @font-face {
-            font-family: "MinecraftBold";
-            src: url("assets/MinecraftBold.woff") format("woff");
-        }
-        @font-face {
-            font-family: 'Icons';
-            src: url('assets/Icons.woff2') format('woff2'),
-                 url('assets/Icons.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-    </style>
-    <link rel="stylesheet" href="css/style.css">
+    <title>WynnMap Hub</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body style="font: 16px MinecraftRegular;">
-    <div id="map-container">
-        <canvas id="map-canvas"></canvas>
-        <div id="tooltip" class="tooltip"></div>
+<body>
+    <div class="site-container">
+        <h1 class="site-header">WynnMap Hub</h1>
+        <p class="site-description">Welcome to WynnMap — choose which map you want to view or edit:</p>
+
+        <div class="site-card-container">
+            <div class="site-card">
+                <h2>Live Map</h2>
+                <p>View the current live map with territory data.</p>
+                <a href="map/index.html" class="button">Open Live Map</a>
+            </div>
+
+            <div class="site-card">
+                <h2>Custom Map Editor</h2>
+                <p>Edit and manage custom maps with guilds and territories.</p>
+                <a href="custom/index.html" class="button">Open Map Editor</a>
+            </div>
+
+            <!-- In future, I can easily add more maps here -->
+        </div>
+
+        <footer>
+            <p></p>
+        </footer>
     </div>
-    <div id="menu-toggle">☰</div>
-
-    <div id="sidebar" class="sidebar closed">
-        <h2>Overlay Options</h2>
-        <label><input type="checkbox" id="toggle-resources" checked> Show Resources</label>
-        <label><input type="checkbox" id="toggle-connections" checked> Show Connections</label>
-        <label><input type="checkbox" id="toggle-timeheld" checked> Show Time Held</label>
-    </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="module" src="js/main.js"></script>
 </body>
 </html>

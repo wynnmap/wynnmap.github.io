@@ -1,8 +1,8 @@
 import { fetchTerritories } from './api.js';
-import { generateTooltip, MAP_WIDTH, MAP_HEIGHT } from './utils.js';
+import { generateTooltip, MAP_WIDTH } from './utils.js';
 import { draw } from './draw.js';
 
-const IMAGE_SRC = "assets/map.png";
+const IMAGE_SRC = "../assets/map.png";
 
 const canvas = document.getElementById("map-canvas");
 const ctx = canvas.getContext("2d");
@@ -91,12 +91,6 @@ canvas.addEventListener("wheel", (e) => {
 
     drawEverything();
 });
-
-document.getElementById("menu-toggle").addEventListener("click", () => {
-    const sidebar = document.getElementById("sidebar");
-    sidebar.classList.toggle("closed");
-});
-
 
 function handleHover(e) {
     const rect = canvas.getBoundingClientRect();

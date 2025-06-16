@@ -1,0 +1,170 @@
+@font-face { font-family: "MinecraftRegular"; src: url("assets/MinecraftRegular.woff") format("woff"); }
+@font-face { font-family: "MinecraftBold"; src: url("assets/MinecraftBold.woff") format("woff"); }
+@font-face { font-family: 'Icons'; src: url('assets/Icons.woff2') format('woff2'), url('assets/Icons.woff') format('woff'); }
+
+/* Global site styles */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #181818;
+    font-family: MinecraftRegular, Arial, sans-serif;
+    overflow: hidden;
+    color: white;
+
+    /* FULL CENTERING */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: MinecraftBold;
+}
+
+
+/* Home page styles */
+
+.site-container {
+    text-align: center;
+    max-width: 800px;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.site-header {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.site-description {
+    font-size: 20px;
+}
+
+.site-card-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.site-card {
+    background: #222;
+    border: 1px solid #333;
+    padding: 30px;
+    width: 250px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.site-card-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.site-card-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.site-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.site-button:hover {
+    background: #45a049;
+}
+
+.site-footer {
+    margin-top: 50px;
+    font-size: 14px;
+    color: #666;
+}
+
+@media (max-width: 600px) {
+    .site-card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .site-card {
+        width: 90%;
+    }
+}
+
+/* --- Shared Map styles --- */
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+.canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    cursor: grab;
+}
+
+.tooltip {
+    position: absolute;
+    color: #fff;
+    font-size: 14px;
+    pointer-events: none;
+    display: none;
+    z-index: 10;
+    white-space: nowrap;
+
+    background-color: black;
+    border: 2px solid black;
+    border-radius: 5px;
+    box-shadow: black 0 0 4px;
+    line-height: 1.3;
+    outline: 2px solid #2c075f;
+    outline-offset: -4px;
+    padding: 10px;
+}
+
+
+/* Live map controls overlay */
+
+#map-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+
+    font-family: MinecraftRegular;
+    color: #fff;
+    font-size: 14px;
+    z-index: 10;
+
+    background-color: black;
+    border: 2px solid black;
+    border-radius: 5px;
+    box-shadow: black 0 0 4px;
+    line-height: 1.3;
+    outline: 2px solid #2c075f;
+    outline-offset: -4px;
+    padding: 15px;
+}
+
+#map-controls h3 {
+    margin-top: 0;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+#map-controls label {
+    font-size: 14px;
+}
+
