@@ -2,7 +2,7 @@ import { hexToRgba, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getFadeAlpha, getTe
 const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
-export function draw(ctx, canvas, image, territories, guilds, offsetX, offsetY, scale) {
+export function draw(ctx, canvas, image, territories, selectedTerritories, guilds, offsetX, offsetY, scale) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.translate(offsetX, offsetY);
@@ -104,6 +104,22 @@ export function draw(ctx, canvas, image, territories, guilds, offsetX, offsetY, 
             }
         }
     }
+
+    // Highlight selected territories
+    if (selectedTerritories && selectedTerritories.length > 0) {
+        ctx.save();
+        ctx.translate(offsetX, offsetY);
+        ctx.scale(scale, scale);
+
+        for (const t of selectedTerritories) {
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(t.rect.x, t.rect.y, t.rect.w, t.rect.h);
+        }
+
+        ctx.restore(); // restore zoomed transform
+    }
+
 
 
     ctx.restore();

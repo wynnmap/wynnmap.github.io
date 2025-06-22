@@ -48,7 +48,7 @@ image.onload = async () => {
 };
 
 function render() {
-    draw(ctx, canvas, image, territories, guilds, offsetX, offsetY, scale);
+    draw(ctx, canvas, image, territories, selectedTerritories, guilds, offsetX, offsetY, scale);
 }
 
 resizeCanvas();

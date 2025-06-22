@@ -1,18 +1,30 @@
-@font-face { font-family: "MinecraftRegular"; src: url("assets/MinecraftRegular.woff") format("woff"); }
-@font-face { font-family: "MinecraftBold"; src: url("assets/MinecraftBold.woff") format("woff"); }
-@font-face { font-family: 'Icons'; src: url('assets/Icons.woff2') format('woff2'), url('assets/Icons.woff') format('woff'); }
+/* === FONT IMPORTS === */
+@font-face {
+    font-family: "MinecraftRegular";
+    src: url("assets/MinecraftRegular.woff") format("woff");
+}
+@font-face {
+    font-family: "MinecraftBold";
+    src: url("assets/MinecraftBold.woff") format("woff");
+}
+@font-face {
+    font-family: 'Icons';
+    src: url('assets/Icons.woff2') format('woff2'), url('assets/Icons.woff') format('woff');
+}
 
-/* Global site styles */
+/* === GLOBAL RESET + BASE === */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
     padding: 0;
-    background-color: #181818;
+    background-color: #0c0c0c;
     font-family: MinecraftRegular, Arial, sans-serif;
+    color: #e5d9ff;
     overflow: hidden;
-    color: white;
 
-    /* FULL CENTERING */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,11 +33,10 @@ body {
 
 h1, h2, h3, h4, h5 {
     font-family: MinecraftBold;
+    color: #d3a5ff;
 }
 
-
-/* Home page styles */
-
+/* === HOMEPAGE STYLES === */
 .site-container {
     text-align: center;
     max-width: 800px;
@@ -35,11 +46,14 @@ h1, h2, h3, h4, h5 {
 
 .site-header {
     font-size: 48px;
+    color: #e5d9ff;
     margin-bottom: 10px;
+    text-shadow: 0 0 5px #7a2eff;
 }
 
 .site-description {
     font-size: 20px;
+    color: #bbb0da;
 }
 
 .site-card-container {
@@ -51,42 +65,56 @@ h1, h2, h3, h4, h5 {
 }
 
 .site-card {
-    background: #222;
-    border: 1px solid #333;
+    background: #1a001f;
+    border: 2px solid #3f0a85;
     padding: 30px;
     width: 250px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(170, 60, 255, 0.2);
+    color: #e5d9ff;
+    transition: transform 0.2s;
+}
+
+.site-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(255, 90, 255, 0.3);
 }
 
 .site-card-title {
     font-size: 24px;
     margin-bottom: 15px;
+    color: #c68cff;
 }
 
 .site-card-description {
     font-size: 16px;
     margin-bottom: 20px;
+    color: #a58ccf;
 }
 
 .site-button {
     display: inline-block;
     padding: 10px 20px;
-    background: #4CAF50;
-    color: white;
+    background: #5f00b2;
+    color: #fff;
     text-decoration: none;
-    border-radius: 5px;
-    transition: 0.3s;
+    border-radius: 6px;
+    font-family: MinecraftBold;
+    transition: background 0.3s;
+    border: 2px solid #a669ff;
+    box-shadow: 0 0 8px #2c075f;
 }
 
 .site-button:hover {
-    background: #45a049;
+    background: #7d00ff;
+    color: #fff;
+    border-color: #e1c2ff;
 }
 
 .site-footer {
     margin-top: 50px;
     font-size: 14px;
-    color: #666;
+    color: #8c6aad;
 }
 
 @media (max-width: 600px) {
@@ -100,8 +128,7 @@ h1, h2, h3, h4, h5 {
     }
 }
 
-/* --- Shared Map styles --- */
-
+/* === MAP & TOOLTIP STYLES === */
 .container {
     width: 100vw;
     height: 100vh;

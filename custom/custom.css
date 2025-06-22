@@ -28,17 +28,72 @@ body {
     padding: 15px;
 }
 
-button {
-    margin-top: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
+
+input[type="text"], input[type="color"], select, button {
+    font-family: MinecraftRegular;
+    font-size: 14px;
+    color: #ffffff;
+
+    background-color: #1c1c1c;
+    border: 2px solid #3f0a85;
+    border-radius: 6px;
+    outline: none;
+
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    width: 100%;
+
+    box-shadow: 0 0 5px rgba(60, 0, 100, 0.5);
+    transition: all 0.2s ease-in-out;
+
+    box-sizing: border-box;
 }
 
-select, input {
-    width: 100%;
-    margin-top: 5px;
-    padding: 5px;
+input[type="text"]:focus, input[type="color"]:focus, select:focus, button:focus {
+    border-color: #a669ff;
+    box-shadow: 0 0 8px #a669ff;
+    background-color: #2a2a2a;
 }
+
+
+button {
+    background-color: #37005a;
+    border: 2px solid #6100b0;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+button:hover {
+    background-color: #4b0091;
+    border-color: #a669ff;
+    color: #fff;
+}
+
+
+input[type="color"] {
+    padding: 0;
+    height: 32px;
+    width: 100%;
+    cursor: pointer;
+    border: 2px solid #3f0a85;
+    border-radius: 6px;
+    outline: none;
+    background: none;
+    border: none;
+}
+
+
+#selected-territory-list div {
+    background-color: #1f0037;
+    padding: 4px 8px;
+    margin-bottom: 3px;
+    border-left: 3px solid #a669ff;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
 
 #toggle-resources {
     width: auto;

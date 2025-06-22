@@ -21,16 +21,17 @@
         <button onclick="removeGuild()">Remove Guild</button>
 
         <h3>Selected Territories:</h3>
-        <div id="selected-territory-list"></div><br>
-        <button onclick="removeSelectedTerritories()">Remove all selections</button>
+        <div id="selected-territory-list"></div>
+        <h4>Assign to:</h4>
         <select id="territory-guild-list"></select>
+        <button onclick="removeSelectedTerritories()">Remove all selections</button>
     </div>
 
     <div id="popup" class="hidden">
         <div class="popup-content">
             <h3>Add Guild</h3>
-            <input type="text" id="popup-guild-name" placeholder="Full Name">
-            <input type="text" id="popup-guild-prefix" placeholder="Prefix (e.g., ABC)">
+            <input type="text" id="popup-guild-name" placeholder="Guild name">
+            <input type="text" id="popup-guild-prefix" placeholder="Guild prefix (e.g. ANO)">
             <input type="color" id="popup-guild-color" value="#ffffff">
             <button onclick="submitGuildPopup()">Add</button>
             <button onclick="closeGuildPopup()">Cancel</button>
