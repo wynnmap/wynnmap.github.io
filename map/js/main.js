@@ -4,7 +4,7 @@ import { draw } from './draw.js';
 
 const IMAGE_SRC = "../assets/map.png";
 
-const canvas = document.getElementById("map-canvas");
+const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
 const tooltip = document.getElementById("tooltip");
 

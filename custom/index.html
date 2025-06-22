@@ -1,1 +1,43 @@
-WIP
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wynncraft Live Territory Map</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="custom.css">
+</head>
+<body style="font: 16px MinecraftRegular;">
+    <div id="map-container">
+        <canvas id="mapCanvas"></canvas>
+        <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <div id="sidebar">
+        <label><input type="checkbox" id="toggle-resources" checked> Show Resources</label><br>
+        <h3>Guilds</h3>
+        <select id="guild-list"></select>
+        <button onclick="addGuild()">Add Guild</button>
+        <button onclick="editGuild()">Edit Guild</button>
+        <button onclick="removeGuild()">Remove Guild</button>
+
+        <h3>Selected Territories:</h3>
+        <div id="selected-territory-list"></div><br>
+        <button onclick="removeSelectedTerritories()">Remove all selections</button>
+        <select id="territory-guild-list"></select>
+    </div>
+
+    <div id="popup" class="hidden">
+        <div class="popup-content">
+            <h3>Add Guild</h3>
+            <input type="text" id="popup-guild-name" placeholder="Full Name">
+            <input type="text" id="popup-guild-prefix" placeholder="Prefix (e.g., ABC)">
+            <input type="color" id="popup-guild-color" value="#ffffff">
+            <button onclick="submitGuildPopup()">Add</button>
+            <button onclick="closeGuildPopup()">Cancel</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

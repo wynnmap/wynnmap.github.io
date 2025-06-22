@@ -1,0 +1,184 @@
+const MAP_WIDTH = 1009;
+const MAP_HEIGHT = 1604;
+
+export { MAP_WIDTH, MAP_HEIGHT };
+
+const FADE_DISTANCE = 0.2;
+
+const RESOURCE_EMOJIS = {
+    emeralds: { glyph: "E", color: "#55d746" },
+    ore:      { glyph: "A", color: "#e8e8e8" },
+    crops:    { glyph: "D", color: "#e8e84d" },
+    fish:     { glyph: "C", color: "#4de8e8" },
+    wood:     { glyph: "B", color: "#e89b00" }
+};
+
+
+export function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `${r},${g},${b}`;
+}
+
+export function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+
+export function getTimeDiffString(date, fullOutput = false) {
+    const now = new Date();
+    let diff = Math.floor((now - date) / 1000);
+    const days = Math.floor(diff / 86400);
+    diff %= 86400;
+    const hours = Math.floor(diff / 3600);
+    diff %= 3600;
+    const mins = Math.floor(diff / 60);
+    const secs = diff % 60;
+
+    let parts = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (mins > 0) parts.push(`${mins}m`);
+    if (secs > 0) parts.push(`${secs}s`);
+
+    if (fullOutput) return parts.join(" ");
+    return parts.slice(0, 2).join(" ");
+}
+
+export function toCanvasCoords(x_ingame, z_ingame) {
+    const x_canvas = (x_ingame + 2382) * MAP_WIDTH / 4034;
+    const y_canvas = (z_ingame + 6572) * MAP_HEIGHT / 6414;
+    return { x: x_canvas, y: y_canvas };
+}
+
+export function drawOutlinedText(ctx, text, x, y, font, color = `rgba(255,255,255,255)`, alpha = 1.0, outlineWidth = 3) {
+    ctx.font = font;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.lineWidth = outlineWidth;
+    ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
+    ctx.strokeText(text, x, y);
+
+    ctx.fillStyle = color;  // color is already rgba
+    ctx.fillText(text, x, y);
+}
+
+export function getTreasuryColor(acquiredDate) {
+    const now = new Date();
+    const heldSeconds = Math.floor((now - acquiredDate) / 1000);
+
+    if (heldSeconds < 3600) {
+        return "#00FF00"; // Green (<1h)
+    } else if (heldSeconds < 86400) {
+        return "#FFFF00"; // Yellow (1h-1d)
+    } else if (heldSeconds < 604800) {
+        return "#FF5555"; // Red (1d-7d)
+    } else {
+        return "#00FFFF"; // Cyan-ish (7d+)
+    }
+}
+
+export function getFadeAlpha(scale, threshold, fadeDistance = FADE_DISTANCE) {
+    let alpha = (scale - threshold + fadeDistance) / fadeDistance;
+    return Math.max(0, Math.min(1, alpha));
+}
+
+export function getTerritoryType(resources, resEmojiMap = RESOURCE_EMOJIS) {
+    const emeralds = parseInt(resources.emeralds || "0");
+    const ore = parseInt(resources.ore || "0");
+    const crops = parseInt(resources.crops || "0");
+    const fish = parseInt(resources.fish || "0");
+    const wood = parseInt(resources.wood || "0");
+
+    const resourceAmounts = { ore, crops, fish, wood };
+    const producedResources = Object.entries(resourceAmounts).filter(([_, amt]) => amt > 0);
+
+    // Rainbow check
+    if (emeralds === 1800 && ore === 900 && crops === 900 && fish === 900 && wood === 900) {
+        const rainbowIcons = [
+            { glyph: resEmojiMap["ore"].glyph,   color: resEmojiMap["ore"].color },
+            { glyph: resEmojiMap["crops"].glyph, color: resEmojiMap["crops"].color },
+            { glyph: resEmojiMap["fish"].glyph,  color: resEmojiMap["fish"].color },
+            { glyph: resEmojiMap["wood"].glyph,  color: resEmojiMap["wood"].color }
+        ];
+        return { type: "rainbow", icons: rainbowIcons };
+    }
+
+    // City check
+    if (emeralds === 18000) {
+        const resType = producedResources.length > 0 ? producedResources[0][0] : null;
+        const res = resType ? resEmojiMap[resType] : { glyph: "", color: "#FFFFFF" };
+        return { type: "city", icons: [
+            { glyph: resEmojiMap["emeralds"].glyph, color: resEmojiMap["emeralds"].color },
+            { glyph: res.glyph, color: res.color }
+        ] };
+    }
+
+    // Double resource check
+    if (producedResources.length === 1 && producedResources[0][1] === 7200) {
+        const res = resEmojiMap[producedResources[0][0]];
+        return { type: "double", icons: [
+            { glyph: res.glyph, color: res.color },
+            { glyph: res.glyph, color: res.color }
+        ] };
+    }
+
+    // Duo resource check
+    if (producedResources.length === 2 && producedResources.every(([_, amt]) => amt === 3600)) {
+        const icons = producedResources.map(([res, _]) => {
+            return { glyph: resEmojiMap[res].glyph, color: resEmojiMap[res].color };
+        });
+        return { type: "duo", icons };
+    }
+
+    // Normal resource territory
+    if (producedResources.length === 1 && producedResources[0][1] === 3600) {
+        const res = resEmojiMap[producedResources[0][0]];
+        return { type: "normal", icons: [{ glyph: res.glyph, color: res.color }] };
+    }
+
+    // Unknown fallback
+    return { type: "unknown", icons: [{ glyph: "?", color: "#FFFFFF" }] };
+}
+
+export function generateTooltip(t, guilds) {
+    const treasuryColor = getTreasuryColor(t.acquiredDate);
+    const heldFor = getTimeDiffString(t.acquiredDate, true);
+    const { type, icons } = getTerritoryType(t.resources);
+    
+    const resourceAmounts = {
+        emeralds: parseInt(t.resources.emeralds || "0"),
+        ore:      parseInt(t.resources.ore || "0"),
+        crops:    parseInt(t.resources.crops || "0"),
+        fish:     parseInt(t.resources.fish || "0"),
+        wood:     parseInt(t.resources.wood || "0"),
+    };
+
+    // Build resources multiline
+    let resourceLines = Object.entries(resourceAmounts)
+        .filter(([res, amount]) => amount > 0)
+        .map(([res, amount]) => {
+            const emoji = RESOURCE_EMOJIS[res];
+            return `<div style="margin-left: 16px;">
+                <span style="font-family: Icons; color: ${emoji.color}; font-size: 12px;">${emoji.glyph}</span> <span style="color: ${emoji.color}">+${amount}</span>
+            </div>`;
+        }).join("");
+
+    // Build type label dynamically
+    let typeLabel = type.charAt(0).toUpperCase() + type.slice(1);  // Capitalize
+
+    return `
+        <div style="font-family: Minecraft, sans-serif; font-size: 16px;">
+            <b style="font-family: MinecraftBold; font-size: 18px;">${t.name}</b><br>
+            Guild: <span style="color: ${guilds[t.guild].color};">${guilds[t.guild].name} [${t.guild}]</span><br>
+            Type: ${typeLabel}<br>
+            Resources:<br>
+            ${resourceLines}
+        </div>
+    `;
+}
+
