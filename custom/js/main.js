@@ -98,10 +98,12 @@ canvas.addEventListener("mouseleave", () => {
     canvas.style.cursor = "grab";
 });
 
-canvas.addEventListener("mousemove", (e) => {
+document.addEventListener("mousemove", (e) => {
     if (isDragging) {
         offsetX = e.clientX - dragStartX;
         offsetY = e.clientY - dragStartY;
+        tooltip.style.left = e.clientX + 10 + "px";
+        tooltip.style.top = e.clientY + 10 + "px";
         render();
     } else {
         handleHover(e);
@@ -124,6 +126,14 @@ canvas.addEventListener("wheel", (e) => {
 });
 
 function handleHover(e) {
+    const isSidebarHovered = document.querySelector(".sidebar:hover");
+    const isPopupOpen = !document.querySelector(".popup")?.classList.contains("hidden");
+
+    if (isSidebarHovered || isPopupOpen) {
+        tooltip.style.display = "none";
+        return;
+    }
+    
     const rect = canvas.getBoundingClientRect();
     const mouseX = (e.clientX - rect.left - offsetX) / scale;
     const mouseY = (e.clientY - rect.top - offsetY) / scale;
