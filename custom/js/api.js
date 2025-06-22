@@ -4,7 +4,7 @@ const API1_URL = "https://athena.wynntils.com/cache/get/territoryList";
 const API2_URL = "https://raw.githubusercontent.com/jakematt123/Wynncraft-Territory-Info/refs/heads/main/territories.json";
 
 // Fetch and merge both APIs
-export async function fetchTerritories() {
+export async function fetchTerritories(full_output) {
     const res1 = await axios.get(API1_URL);
     const res2 = await axios.get(API2_URL);
 
@@ -12,6 +12,7 @@ export async function fetchTerritories() {
     const data2 = res2.data;
 
     let territories = {};
+    let guilds = {}
 
     for (const name in data1) {
         const t = data1[name];
@@ -32,6 +33,13 @@ export async function fetchTerritories() {
             tradingRoutes: [],
             resources: {}
         };
+        
+        if (full_output) {
+            territories[name].guild = t.guildPrefix
+            if (!guilds[t.guildPrefix]) {
+                guilds[t.guildPrefix] = {name: t.guild, prefix: t.guildPrefix, color: t.guildColor}
+            }
+        }
     }
 
     // Merge in the trading routes data
@@ -43,5 +51,10 @@ export async function fetchTerritories() {
         }
     }
 
-    return Object.values(territories);
+    if (full_output) {
+        guilds["None"] = {prefix: "None", name: "No one", color: "#ffffff"}
+        return [Object.values(territories), guilds];
+    } else {
+        return Object.values(territories);
+    }
 }

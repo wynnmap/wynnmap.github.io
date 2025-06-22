@@ -34,11 +34,32 @@ let isDragging = false;
 let dragStartX = 0;
 let dragStartY = 0;
 
+const params = new URLSearchParams(window.location.search);
+const encodedData = params.get("data");
+
 let image = new Image();
 image.src = IMAGE_SRC;
 
 image.onload = async () => {
     territories = await fetchTerritories();
+
+    if (encodedData) {
+        try {
+            const json = LZString.decompressFromEncodedURIComponent(encodedData);
+            const decoded = JSON.parse(json);
+
+            guilds = decoded.guilds || {};
+
+            for (const t of territories) {
+                if (decoded.territories && decoded.territories[t.name]) {
+                    t.guild = decoded.territories[t.name];
+                }
+            }
+        } catch (e) {
+            console.error("Failed to parse URL data", e);
+        }
+    }
+
     updateUI();
     render();
 
@@ -314,4 +335,99 @@ function updateUI() {
     const allSame = selectedTerritories.every(t => t.guild === firstGuild);
     terrGuildListSelect.value = allSame ? firstGuild : "";
 }
+
+
+
+window.exportMap = function () {
+    const data = {
+        territories: {},
+        guilds
+    };
+
+    for (const t of territories) {
+        data.territories[t.name] = t.guild;
+    }
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "territory_data.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+};
+
+window.handleImportMap = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const data = JSON.parse(e.target.result);
+
+            guilds = data.guilds || {};
+
+            // Apply ownership to existing territories
+            const ownership = data.territories || {};
+            for (const t of territories) {
+                if (ownership[t.name]) {
+                    t.guild = ownership[t.name];
+                } else {
+                    t.guild = "None";
+                }
+            }
+
+            updateUI();
+            render();
+        } catch (err) {
+            alert("Failed to load map data.");
+            console.error(err);
+        }
+    };
+    reader.readAsText(file);
+};
+
+window.copyMapURL = function () {
+    const data = {
+        territories: {},
+        guilds
+    };
+
+    for (const t of territories) {
+        data.territories[t.name] = t.guild;
+    }
+
+    const encoded = JSON.stringify(data);
+    const compressed = LZString.compressToEncodedURIComponent(encoded);
+    const url = `${window.location.origin}${window.location.pathname}?data=${compressed}`;
+    navigator.clipboard.writeText(url);
+    alert("Map URL copied to clipboard.");
+};
+
+window.importFromAPI = async function () {
+    [territories, guilds] = await fetchTerritories(true);
+
+    updateUI();
+    render();
+    
+};
+
+window.resetMap = async function () {
+    territories = []
+    selectedTerritories = []
+
+    territories = await fetchTerritories();
+    updateUI();
+    render();
+};
+
+window.resetAll = async function () {
+    guilds = {"None": {prefix: "None", name: "No one", color: "#ffffff"}};
+
+    resetMap();
+};
+
 
