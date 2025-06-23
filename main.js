@@ -6,6 +6,7 @@ document.querySelectorAll('.button').forEach(btn => {
         document.querySelector('.site-container').classList.add('exit');
         document.getElementById('vignette').classList.add('exit');
         document.getElementById('map-img').classList.add('exit');
+        document.getElementById('credits-button').classList.add('exit');
 
         setTimeout(() => {
             window.location.href = href;
@@ -27,29 +28,42 @@ const offsetY = (window.innerHeight - (MAP_HEIGHT * scale)) / 2;
 
 mapImg.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
 
-window.addEventListener('DOMContentLoaded', () => {
-    const isReturning = sessionStorage.getItem('returningToHub') === 'true';
-    sessionStorage.removeItem('returningToHub');
+const creditsButton = document.getElementById('credits-button');
+const creditsPopup = document.getElementById('credits-popup');
+const creditsVignette = document.getElementById('credits-vignette');
+const popupClose = document.getElementById('popup-close');
 
-    if (isReturning) {
-        const vignette = document.getElementById('vignette');
-        const mapImg = document.getElementById('map-img');
-        const siteContainer = document.querySelector('.site-container');
+function openPopup() {
+  creditsVignette.style.display = 'block';
+  creditsPopup.style.display = 'block';
 
-        // Start fully invisible
-        vignette.classList.add('entering');
-        mapImg.classList.add('entering');
-        siteContainer.classList.add('entering');
+  creditsVignette.classList.remove('closing');
+  creditsPopup.classList.remove('closing');
 
-        // Trigger reflow
-        void vignette.offsetWidth;
+  creditsVignette.classList.add('active');
+  creditsPopup.classList.add('active');
+}
 
-        // Remove 'entering' after a tick to animate in
-        setTimeout(() => {
-            vignette.classList.remove('entering');
-            mapImg.classList.remove('entering');
-            siteContainer.classList.remove('entering');
-        }, 20);
+function closePopup() {
+  creditsVignette.classList.remove('active');
+  creditsPopup.classList.remove('active');
+
+  creditsVignette.classList.add('closing');
+  creditsPopup.classList.add('closing');
+
+  // Wait for animation to end, then hide
+  const onAnimationEnd = (e) => {
+    if (e.target === e.currentTarget) {
+      creditsPopup.style.display = 'none';
+      creditsVignette.style.display = 'none';
+      creditsVignette.removeEventListener('animationend', onAnimationEnd);
     }
-});
+  };
+  creditsVignette.addEventListener('animationend', onAnimationEnd);
+}
+
+creditsButton.addEventListener('click', openPopup);
+popupClose.addEventListener('click', closePopup);
+creditsVignette.addEventListener('click', closePopup);
+
 
