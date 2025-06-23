@@ -10,7 +10,7 @@ document.querySelectorAll('.button').forEach(btn => {
 
         setTimeout(() => {
             window.location.href = href;
-        }, 600);
+        }, 800);
     });
 });
 
