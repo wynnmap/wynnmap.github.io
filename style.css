@@ -42,6 +42,10 @@ h1, h2, h3, h4, h5 {
     max-width: 800px;
     padding: 40px;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+    color: white;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .site-header {
@@ -100,7 +104,7 @@ h1, h2, h3, h4, h5 {
     text-decoration: none;
     border-radius: 6px;
     font-family: MinecraftBold;
-    transition: background 0.3s;
+    transition: background 0.6s;
     border: 2px solid #a669ff;
     box-shadow: 0 0 8px #2c075f;
 }
@@ -116,6 +120,82 @@ h1, h2, h3, h4, h5 {
     font-size: 14px;
     color: #8c6aad;
 }
+
+#map-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -2;
+    pointer-events: none;
+}
+
+#map-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    filter: blur(6px) brightness(0.7);
+    transition: filter 0.6s linear;
+}
+
+#vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    z-index: -1;
+}
+
+button {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.6s ease;
+}
+
+.button:hover {
+    background: #2980b9;
+}
+
+.site-container.exit {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+#vignette.exit {
+    opacity: 0;
+}
+
+#map-img.exit {
+    filter: blur(0px);
+}
+
+#vignette.entering {
+    opacity: 0;
+}
+
+#map-img.entering {
+    filter: blur(0px) brightness(1);
+}
+
+.site-container.entering {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
 
 @media (max-width: 600px) {
     .site-card-container {

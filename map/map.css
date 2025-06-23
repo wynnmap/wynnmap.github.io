@@ -19,6 +19,36 @@
     outline: 2px solid #2c075f;
     outline-offset: -4px;
     padding: 15px;
+
+    opacity: 0;
+    transform: translateX(50%);
+    animation: fadeInSlide 0.6s ease forwards;
+}
+
+#map-controls.exit {
+    animation: fadeOutSlide 0.6s ease forwards;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOutSlide {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(50%);
+    }
 }
 
 #map-controls h3 {
@@ -28,4 +58,19 @@
 }
 #map-controls label {
     font-size: 14px;
+}
+
+button {
+    background-color: #37005a;
+    border: 2px solid #6100b0;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: MinecraftRegular;
+    letter-spacing: 0.5px;
+}
+
+button:hover {
+    background-color: #4b0091;
+    border-color: #a669ff;
+    color: #fff;
 }

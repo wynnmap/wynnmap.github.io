@@ -1,5 +1,5 @@
 import { fetchTerritories } from './api.js';
-import { generateTooltip, MAP_WIDTH } from './utils.js';
+import { generateTooltip, MAP_WIDTH, MAP_HEIGHT, easeInOutQuad } from './utils.js';
 import { draw } from './draw.js';
 
 const IMAGE_SRC = "../assets/map.png";
@@ -8,13 +8,15 @@ const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
 const tooltip = document.getElementById("tooltip");
 
+const defaultScale = 0.75;
+
 let territories = [];
 let offsetX = 0;
 let offsetY = 0;
-let scale = 0.75;
+let scale = defaultScale;
 
-offsetX = -(canvas.width - MAP_WIDTH) / 2;
-offsetY = -canvas.height * 1.1;
+offsetX = (window.innerWidth - (MAP_WIDTH * scale)) / 2;
+offsetY = (window.innerHeight - (MAP_HEIGHT * scale)) / 2;
 
 let isDragging = false;
 let dragStartX = 0;
@@ -25,19 +27,19 @@ image.src = IMAGE_SRC;
 
 image.onload = async () => {
     territories = await fetchTerritories();
-    drawEverything();
+    render();
 
     setInterval(async () => {
         territories = await fetchTerritories();
-        drawEverything();
+        render();
     }, 10000);
 
     setInterval(() => {
-        drawEverything();
+        render();
     }, 500);
 };
 
-function drawEverything() {
+function render() {
     draw(ctx, canvas, image, territories, offsetX, offsetY, scale);
 }
 
@@ -47,7 +49,7 @@ window.addEventListener("resize", resizeCanvas);
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    drawEverything();
+    render();
 }
 
 canvas.addEventListener("mousedown", (e) => {
@@ -73,7 +75,7 @@ document.addEventListener("mousemove", (e) => {
         offsetY = e.clientY - dragStartY;
         tooltip.style.left = e.clientX + 10 + "px";
         tooltip.style.top = e.clientY + 10 + "px";
-        drawEverything();
+        render();
     } else {
         handleHover(e);
     }
@@ -91,7 +93,7 @@ canvas.addEventListener("wheel", (e) => {
     offsetX -= (mx - offsetX) * (scale / prevScale - 1);
     offsetY -= (my - offsetY) * (scale / prevScale - 1);
 
-    drawEverything();
+    render();
 });
 
 function handleHover(e) {
@@ -122,3 +124,51 @@ function handleHover(e) {
         tooltip.style.display = "none";
     }
 }
+
+window.backToHub = function () {
+    document.getElementById('map-controls').classList.add('exit');
+    const duration = 600; // milliseconds
+
+    // Start values
+    const startX = offsetX;
+    const startY = offsetY;
+    const startScale = scale;
+    const deltaScale = defaultScale - startScale;
+
+    // Recalculate centered position after scaling
+    const targetOffsetX = (window.innerWidth - (MAP_WIDTH * defaultScale)) / 2;
+    const targetOffsetY = (window.innerHeight - (MAP_HEIGHT * defaultScale)) / 2;
+
+    const deltaX = targetOffsetX - startX;
+    const deltaY = targetOffsetY - startY;
+
+    const startTime = performance.now();
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1); // Clamp between 0 and 1
+        const eased = easeInOutQuad(progress);
+
+        // Interpolate scale and position
+        scale = startScale + deltaScale * eased;
+        offsetX = startX + deltaX * eased;
+        offsetY = startY + deltaY * eased;
+
+        render();
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else {
+            // Snap to final values
+            scale = defaultScale;
+            offsetX = targetOffsetX;
+            offsetY = targetOffsetY;
+            render();
+
+            sessionStorage.setItem('returningToHub', 'true');
+            window.location.href = '/';
+        }
+    }
+
+    requestAnimationFrame(step);
+};

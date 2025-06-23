@@ -1,5 +1,5 @@
 import { fetchTerritories } from './api.js';
-import { generateTooltip, MAP_WIDTH } from './utils.js';
+import { generateTooltip, MAP_WIDTH, MAP_HEIGHT, easeInOutQuad } from './utils.js';
 import { draw } from './draw.js';
 
 const IMAGE_SRC = "../assets/map.png";
@@ -23,12 +23,14 @@ opt.textContent = `No one [None]`;
 terrGuildListSelect.appendChild(opt);
 guildListSelect.appendChild(opt);
 
+const defaultScale = 0.75;
+
 let offsetX = 0;
 let offsetY = 0;
-let scale = 0.75;
+let scale = defaultScale;
 
-offsetX = -(canvas.width - MAP_WIDTH) / 2;
-offsetY = -canvas.height * 1.1;
+offsetX = (window.innerWidth - (MAP_WIDTH * scale)) / 2;
+offsetY = (window.innerHeight - (MAP_HEIGHT * scale)) / 2;
 
 let isDragging = false;
 let dragStartX = 0;
@@ -438,6 +440,54 @@ window.resetAll = async function () {
     guilds = {"None": {prefix: "None", name: "No one", color: "#ffffff"}};
 
     resetMap();
+};
+
+window.backToHub = function () {
+    document.getElementById('sidebar').classList.add('exit');
+    const duration = 600; // milliseconds
+
+    // Start values
+    const startX = offsetX;
+    const startY = offsetY;
+    const startScale = scale;
+    const deltaScale = defaultScale - startScale;
+
+    // Recalculate centered position after scaling
+    const targetOffsetX = (window.innerWidth - (MAP_WIDTH * defaultScale)) / 2;
+    const targetOffsetY = (window.innerHeight - (MAP_HEIGHT * defaultScale)) / 2;
+
+    const deltaX = targetOffsetX - startX;
+    const deltaY = targetOffsetY - startY;
+
+    const startTime = performance.now();
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1); // Clamp between 0 and 1
+        const eased = easeInOutQuad(progress);
+
+        // Interpolate scale and position
+        scale = startScale + deltaScale * eased;
+        offsetX = startX + deltaX * eased;
+        offsetY = startY + deltaY * eased;
+
+        render();
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else {
+            // Snap to final values
+            scale = defaultScale;
+            offsetX = targetOffsetX;
+            offsetY = targetOffsetY;
+            render();
+
+            sessionStorage.setItem('returningToHub', 'true');
+            window.location.href = '/';
+        }
+    }
+
+    requestAnimationFrame(step);
 };
 
 
