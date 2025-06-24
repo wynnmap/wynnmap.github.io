@@ -21,11 +21,46 @@ export function hexToRgb(hex) {
     return `${r},${g},${b}`;
 }
 
-export function hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
+export function hexToRgba(hex, alphaOverride = null) {
+    hex = hex.replace(/^#/, '');
+
+    let r, g, b, a = 1;
+
+    if (hex.length === 4) {
+        // Format: #RGBA
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+        a = parseInt(hex[3] + hex[3], 16) / 255;
+    } else if (hex.length === 6) {
+        // Format: #RRGGBB
+        r = parseInt(hex.slice(0, 2), 16);
+        g = parseInt(hex.slice(2, 4), 16);
+        b = parseInt(hex.slice(4, 6), 16);
+    } else {
+        throw new Error(`Invalid hex color: ${hex}`);
+    }
+
+    if (alphaOverride !== null) {
+        a = alphaOverride;
+    }
+
+    return `rgba(${r},${g},${b},${a})`;
+}
+
+export function fixHexCode(hex) {
+    // Remove "#" if present
+    hex = hex.replace(/^#/, '');
+
+    if (hex.length === 4) {
+        const r = hex[0] + hex[0];
+        const g = hex[1] + hex[1];
+        const b = hex[2] + hex[2];
+        return `#${r}${g}${b}`;
+    }
+
+    // Return original if not 4 digits
+    return `#${hex}`;
 }
 
 export function getTimeDiffString(date, fullOutput = false) {

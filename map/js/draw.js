@@ -1,4 +1,4 @@
-import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor, getFadeAlpha, getTerritoryType, hexToRgb } from './utils.js';
+import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor, getFadeAlpha, getTerritoryType, hexToRgb, fixHexCode } from './utils.js';
 const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
@@ -50,7 +50,7 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
         ctx.lineWidth = 1.5;
         ctx.strokeRect(t.rect.x, t.rect.y, t.rect.w, t.rect.h);
 
-        ctx.strokeStyle = t.color;
+        ctx.strokeStyle = fixHexCode(t.color);
         ctx.lineWidth = 1;
         ctx.strokeRect(t.rect.x, t.rect.y, t.rect.w, t.rect.h);
 

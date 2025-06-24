@@ -1,4 +1,4 @@
-import { hexToRgba, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getFadeAlpha, getTerritoryType, hexToRgb } from './utils.js';
+import { hexToRgba, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getFadeAlpha, getTerritoryType, hexToRgb, fixHexCode } from './utils.js';
 const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
@@ -46,7 +46,7 @@ export function draw(ctx, canvas, mapImage, crownImage, territories, selectedTer
         ctx.lineWidth = 1.5;
         ctx.strokeRect(t.rect.x, t.rect.y, t.rect.w, t.rect.h);
 
-        ctx.strokeStyle = guilds[t.guild].color;
+        ctx.strokeStyle = fixHexCode(guilds[t.guild].color);
         ctx.lineWidth = 1;
         ctx.strokeRect(t.rect.x, t.rect.y, t.rect.w, t.rect.h);
 
