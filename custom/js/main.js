@@ -72,7 +72,6 @@ image.onload = async () => {
 };
 
 function render() {
-    console.log(guilds)
     draw(ctx, canvas, image, crownImage, territories, selectedTerritories, guilds, offsetX, offsetY, scale);
 }
 
@@ -452,7 +451,7 @@ window.setHQ = async function () {
     }
     const hqTerritory = selectedTerritories[0];
     guilds[hqTerritory.guild].hq = hqTerritory.name;
-    
+
     selectedTerritories = [];
     updateUI();
     render();
