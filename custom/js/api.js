@@ -1,53 +1,28 @@
-import { toCanvasCoords } from './utils.js';
+import { terr_data } from '../../assets/terr_data.js';
 
-const API1_URL = "https://athena.wynntils.com/cache/get/territoryList";
-const API2_URL = "https://raw.githubusercontent.com/jakematt123/Wynncraft-Territory-Info/refs/heads/main/territories.json";
+const API_URL = "https://athena.wynntils.com/cache/get/territoryList";
 
 // Fetch and merge both APIs
 export async function fetchTerritories(full_output) {
-    const res1 = await axios.get(API1_URL);
-    const res2 = await axios.get(API2_URL);
+    const res = await axios.get(API_URL);
 
-    const data1 = res1.data.territories;
-    const data2 = res2.data;
+    const data = res.data.territories;
 
-    let territories = {};
+    let territories = terr_data;
     let guilds = {}
 
-    for (const name in data1) {
-        const t = data1[name];
-        const loc = t.location;
-
-        const topLeft = toCanvasCoords(loc.startX, loc.startZ);
-        const bottomRight = toCanvasCoords(loc.endX, loc.endZ);
-
-        territories[name] = {
-            name: t.territory,
-            guild: "None",
-            rect: {
-                x: Math.min(topLeft.x, bottomRight.x),
-                y: Math.min(topLeft.y, bottomRight.y),
-                w: Math.abs(bottomRight.x - topLeft.x),
-                h: Math.abs(bottomRight.y - topLeft.y),
-            },
-            tradingRoutes: [],
-            resources: {}
-        };
+    for (const name in territories) {
+        const t = data[name];
         
         if (full_output) {
+            territories[name].guild = t.guildPrefix
+
             territories[name].guild = t.guildPrefix
             if (!guilds[t.guildPrefix]) {
                 guilds[t.guildPrefix] = {name: t.guild, prefix: t.guildPrefix, color: t.guildColor}
             }
-        }
-    }
-
-    // Merge in the trading routes data
-    for (const name in data2) {
-        if (territories[name]) {
-            const t = data2[name];
-            territories[name].tradingRoutes = t["Trading Routes"] || [];
-            territories[name].resources = t.resources || {};
+        } else {
+            territories[name].guild = "None";
         }
     }
 
