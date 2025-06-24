@@ -26,6 +26,7 @@ let image = new Image();
 image.src = IMAGE_SRC;
 
 image.onload = async () => {
+    ctx.imageSmoothingEnabled = false;
     territories = await fetchTerritories();
     render();
 
@@ -39,8 +40,8 @@ image.onload = async () => {
     }, 500);
 };
 
-function render() {
-    draw(ctx, canvas, image, territories, offsetX, offsetY, scale);
+function render(globalAlpha = 1) {
+    draw(ctx, canvas, image, territories, offsetX, offsetY, scale, globalAlpha);
 }
 
 resizeCanvas();
@@ -154,7 +155,7 @@ window.backToHub = function () {
         offsetX = startX + deltaX * eased;
         offsetY = startY + deltaY * eased;
 
-        render();
+        render(1-eased);
 
         if (progress < 1) {
             requestAnimationFrame(step);
@@ -163,7 +164,7 @@ window.backToHub = function () {
             scale = defaultScale;
             offsetX = targetOffsetX;
             offsetY = targetOffsetY;
-            render();
+            render(1-eased);
 
             sessionStorage.setItem('returningToHub', 'true');
             window.location.href = '/';

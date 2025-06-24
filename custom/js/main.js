@@ -44,6 +44,7 @@ let crownImage = new Image();
 crownImage.src = "../assets/HQ.png";
 
 image.onload = async () => {
+    ctx.imageSmoothingEnabled = false;
     territories = await fetchTerritories();
 
     if (encodedData) {
@@ -71,8 +72,8 @@ image.onload = async () => {
     }, 500);
 };
 
-function render() {
-    draw(ctx, canvas, image, crownImage, territories, selectedTerritories, guilds, offsetX, offsetY, scale);
+function render(globalAlpha = 1) {
+    draw(ctx, canvas, image, crownImage, territories, selectedTerritories, guilds, offsetX, offsetY, scale, globalAlpha);
 }
 
 resizeCanvas();
@@ -486,7 +487,7 @@ window.backToHub = function () {
         offsetX = startX + deltaX * eased;
         offsetY = startY + deltaY * eased;
 
-        render();
+        render(1-eased);
 
         if (progress < 1) {
             requestAnimationFrame(step);
@@ -495,7 +496,7 @@ window.backToHub = function () {
             scale = defaultScale;
             offsetX = targetOffsetX;
             offsetY = targetOffsetY;
-            render();
+            render(1-eased);
 
             sessionStorage.setItem('returningToHub', 'true');
             window.location.href = '/';

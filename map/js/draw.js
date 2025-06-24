@@ -2,12 +2,14 @@ import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, 
 const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
-export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
+export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale, globalAlpha) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.translate(offsetX, offsetY);
     ctx.scale(scale, scale);
     ctx.drawImage(image, 0, 0, MAP_WIDTH, MAP_HEIGHT);
+
+    ctx.globalAlpha = globalAlpha;
 
     const showResources = document.getElementById("toggle-resources").checked;
     const showConnections = document.getElementById("toggle-connections").checked;
@@ -126,6 +128,6 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale) {
         }
     }
 
-
+    ctx.globalAlpha = 1;
     ctx.restore();
 }
