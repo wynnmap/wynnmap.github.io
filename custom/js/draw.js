@@ -2,12 +2,12 @@ import { hexToRgba, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getFadeAlpha, getTe
 const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
-export function draw(ctx, canvas, image, territories, selectedTerritories, guilds, offsetX, offsetY, scale) {
+export function draw(ctx, canvas, mapImage, crownImage, territories, selectedTerritories, guilds, offsetX, offsetY, scale) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.translate(offsetX, offsetY);
     ctx.scale(scale, scale);
-    ctx.drawImage(image, 0, 0, MAP_WIDTH, MAP_HEIGHT);
+    ctx.drawImage(mapImage, 0, 0, MAP_WIDTH, MAP_HEIGHT);
 
     const showResources = document.getElementById("toggle-resources").checked;
 
@@ -59,6 +59,16 @@ export function draw(ctx, canvas, image, territories, selectedTerritories, guild
         const screenY = offsetY + centerY * scale;
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        if (guilds[t.guild].hq == t.name) {
+            const iconSize = 35;
+            const halfSize = iconSize / 2;
+            ctx.globalAlpha = getFadeAlpha(scale, SHOW_NAME_THRESHOLD)
+
+            ctx.drawImage(crownImage, screenX - halfSize, screenY - halfSize, iconSize, iconSize);
+            ctx.globalAlpha = 1;
+            continue;
+        }
 
         let textY = screenY;
         if (scale > SHOW_INFO_THRESHOLD) {

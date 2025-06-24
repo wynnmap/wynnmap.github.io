@@ -2,8 +2,6 @@ import { fetchTerritories } from './api.js';
 import { generateTooltip, MAP_WIDTH, MAP_HEIGHT, easeInOutQuad } from './utils.js';
 import { draw } from './draw.js';
 
-const IMAGE_SRC = "../assets/map.png";
-
 const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
 const tooltip = document.getElementById("tooltip");
@@ -40,7 +38,10 @@ const params = new URLSearchParams(window.location.search);
 const encodedData = params.get("data");
 
 let image = new Image();
-image.src = IMAGE_SRC;
+image.src = "../assets/map.png";
+
+let crownImage = new Image();
+crownImage.src = "../assets/HQ.png";
 
 image.onload = async () => {
     territories = await fetchTerritories();
@@ -71,7 +72,8 @@ image.onload = async () => {
 };
 
 function render() {
-    draw(ctx, canvas, image, territories, selectedTerritories, guilds, offsetX, offsetY, scale);
+    console.log(guilds)
+    draw(ctx, canvas, image, crownImage, territories, selectedTerritories, guilds, offsetX, offsetY, scale);
 }
 
 resizeCanvas();
@@ -116,7 +118,7 @@ canvas.addEventListener("wheel", (e) => {
     const zoomAmount = -e.deltaY * 0.001;
     const prevScale = scale;
     scale += zoomAmount;
-    scale = Math.min(Math.max(0.3, scale), 5);
+    scale = Math.min(Math.max(0.4, scale), 5);
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
@@ -304,6 +306,7 @@ terrGuildListSelect.addEventListener("change", () => {
     if (!selectedPrefix || !guilds[selectedPrefix]) return;
 
     for (const territory of selectedTerritories) {
+        if (guilds[territory.guild].hq == territory.name) { guilds[territory.guild].hq = ""; }
         territory.guild = selectedPrefix;
     }
 
@@ -440,6 +443,19 @@ window.resetAll = async function () {
     guilds = {"None": {prefix: "None", name: "No one", color: "#ffffff"}};
 
     resetMap();
+};
+
+window.setHQ = async function () {
+    if (!selectedTerritories.length === 1) {
+        alert("Select one territory to mark as HQ.");
+        return;
+    }
+    const hqTerritory = selectedTerritories[0];
+    guilds[hqTerritory.guild].hq = hqTerritory.name;
+    
+    selectedTerritories = [];
+    updateUI();
+    render();
 };
 
 window.backToHub = function () {

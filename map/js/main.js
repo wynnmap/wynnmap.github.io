@@ -85,7 +85,7 @@ canvas.addEventListener("wheel", (e) => {
     const zoomAmount = -e.deltaY * 0.001;
     const prevScale = scale;
     scale += zoomAmount;
-    scale = Math.min(Math.max(0.3, scale), 5);
+    scale = Math.min(Math.max(0.4, scale), 5);
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
