@@ -446,7 +446,7 @@ window.resetAll = async function () {
 };
 
 window.setHQ = async function () {
-    if (!selectedTerritories.length === 1) {
+    if (!(selectedTerritories.length === 1)) {
         alert("Select one territory to mark as HQ.");
         return;
     }
