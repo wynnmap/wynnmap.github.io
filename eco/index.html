@@ -43,7 +43,7 @@
         <input type="file" id="import-map-input" accept=".json" style="display: none;" onchange="handleImportMap(event)">
         <button onclick="document.getElementById('import-map-input').click()">Import Map</button>
         <button onclick="copyMapURL()">Copy Shareable URL</button>
-        <button onclick="resetMap()">Reset Map</button>
+        <button onclick="importFromAPI()">Import from API</button>
         <button onclick="resetAll()">Reset All</button>
 
     </div>
@@ -60,6 +60,24 @@
             <div id="upgrades-grid"></div>
         </div>
     </div>
+
+    <!-- Import From API Popup -->
+    <div id="import-popup" class="popup hidden">
+        <div class="popup-inner">
+            <div class="popup-close" id="import-close">x</div>
+            <h2>Import Territories</h2>
+            <p style="margin-bottom: 10px;">Select a guild to import from:</p>
+
+            <select id="import-select">
+                <!-- Options populated in JS -->
+            </select>
+
+            <div style="margin-top: 20px;">
+                <button id="import-confirm">Import</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Tooltip for upgrade hover -->
     <div id="upgrades-tooltip" class="hidden">

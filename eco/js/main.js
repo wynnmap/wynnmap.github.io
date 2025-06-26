@@ -16,6 +16,7 @@ const economySummary = document.getElementById('economy-summary');
 
 let territories = [];
 let guilds =  {"None": {prefix: "None", name: "No one", color: "#ffffff"}, "Claim": {prefix: "Claim", name: "Claim", color: "#ff0000"}};
+let guildsList = await fetchGuilds();
 let selectedTerritories = [];
 
 const defaultScale = 0.75;
@@ -139,7 +140,8 @@ canvas.addEventListener("wheel", (e) => {
 
 function handleHover(e) {
     const isSidebarHovered = document.querySelector(".sidebar:hover");
-    const isPopupOpen = !upgradesPopup.classList.contains("hidden");
+    const isPopupOpen = !upgradesPopup.classList.contains("hidden") || 
+                        !document.getElementById("import-popup").classList.contains("hidden");
 
     if (isSidebarHovered || isPopupOpen) {
         tooltip.style.display = "none";
@@ -619,27 +621,55 @@ window.copyMapURL = function () {
 };
 
 window.importFromAPI = async function () {
-    const test = await fetchGuilds();
-    console.log(test)
+    const popup = document.getElementById("import-popup");
+    const select = document.getElementById("import-select");
 
-    updateUI();
-    render();
+    console.log(guildsList)
+    
+    select.innerHTML = "";
+    for (const prefix in guildsList) {
+        const opt = document.createElement("option");
+        opt.value = prefix;
+        opt.textContent = guildsList[prefix];
+        select.appendChild(opt);
+    }
+
+    showVignette();
+    popup.style.animation = "fadeInUp 0.4s ease forwards";
+    popup.style.pointerEvents = "all";
+    popup.classList.remove('hidden');
     
 };
 
-window.resetMap = async function () {
-    territories = []
+document.getElementById("import-close").addEventListener("click", closeImportPopup);
+document.getElementById("import-confirm").addEventListener("click", async () => {
+    const prefix = document.getElementById("import-select").value;
+    const territories = await fetchTerritories(prefix);
+
+    window.territories = territories;
+
+    updateUI();
+    render();
+    closeImportPopup();
+});
+
+function closeImportPopup() {
+    const popup = document.getElementById("import-popup");
+
+    hideVignette();
+    popup.style.animation = "fadeOutDown 0.4s ease forwards";
+    popup.style.pointerEvents = "none";
+    setTimeout(() => popup.classList.add('hidden'), 400);
+}
+
+
+window.resetAll = async function () {
+    guilds =  {"None": {prefix: "None", name: "No one", color: "#ffffff"}, "Claim": {prefix: "Claim", name: "Claim", color: "#ff0000"}};
     selectedTerritories = []
 
     territories = await fetchTerritories();
     updateUI();
     render();
-};
-
-window.resetAll = async function () {
-    guilds = {"None": {prefix: "None", name: "No one", color: "#ffffff"}};
-
-    resetMap();
 };
 
 window.setHQ = async function () {

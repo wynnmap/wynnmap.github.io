@@ -307,6 +307,45 @@ input[type="color"] {
 
 
 
+/* --- Import from API Popup --- */
+
+#import-popup {
+    position: fixed;
+    top: 50%;
+    width: 800px;
+    max-width: 70%;
+    margin-right: 15%;
+    max-width: 90vw;
+    border-radius: 10px;
+
+    background: #19002e; /* darker, deeper violet */
+    border: 2px solid #4c0a99;
+    box-shadow: 0 0 15px rgba(162, 107, 255, 0.25);
+    color: #e7d9ff;
+
+    z-index: 3;
+    font-family: MinecraftRegular;
+    padding: 50px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-40%);
+}
+
+#import-popup.hidden {
+    display: none;
+}
+
+#import-select {
+    width: 100%;
+    padding: 8px;
+    color: #fff;
+    font-family: MinecraftRegular;
+    font-size: 14px;
+    background: #290142;
+    border: 2px solid #46017e;
+    color: #fff;
+    border-radius: 6px;
+}
 
 
 /* --- Economy Toggle Switch --- */
