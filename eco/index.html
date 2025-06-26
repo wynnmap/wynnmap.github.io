@@ -26,6 +26,7 @@
         </div>
 
         <div id="economy-summary" class="economy-view"></div>
+        <button onclick="openTributesPopup()">Edit Tributes</button>
 
         <hr style="border:0; border-top:1px solid #3f0a85; margin:6px 0;">
 
@@ -58,6 +59,23 @@
             <span class="popup-close" id="upgrades-close">x</span>
             </div>
             <div id="upgrades-grid"></div>
+        </div>
+    </div>
+
+    <div id="tributes-popup" class="popup hidden">
+        <div class="popup-inner">
+            <div class="popup-close" id="tributes-close">x</div>
+            <h2 class="popup-header" style="margin-left: 20px;">Edit Tributes</h2>
+            <div id="tributes-columns">
+            <div class="tribute-column">
+                <h3>Sending</h3>
+                <div id="tribute-sent-inputs"></div>
+            </div>
+            <div class="tribute-column">
+                <h3>Receiving</h3>
+                <div id="tribute-received-inputs"></div>
+            </div>
+            </div>
         </div>
     </div>
 

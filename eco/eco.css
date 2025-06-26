@@ -306,6 +306,69 @@ input[type="color"] {
 }
 
 
+/* --- Tributes Popup --- */
+
+#tributes-popup {
+    position: fixed;
+    top: 50%;
+    width: 800px;
+    max-width: 70%;
+    margin-right: 15%;
+    max-width: 90vw;
+    border-radius: 10px;
+
+    background: #19002e; /* darker, deeper violet */
+    border: 2px solid #4c0a99;
+    box-shadow: 0 0 15px rgba(162, 107, 255, 0.25);
+    color: #e7d9ff;
+
+    z-index: 3;
+    font-family: MinecraftRegular;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-40%);
+}
+
+#tributes-popup.hidden {
+    display: none;
+}
+
+#tributes-columns {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.tribute-column {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.tribute-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tribute-label {
+    font-size: 14px;
+    width: 120px;
+}
+
+.tribute-input {
+    width: 80px;
+    padding: 6px;
+    border: 2px solid #46017e;
+    border-radius: 4px;
+    background: #290142;
+    color: white;
+    font-family: MinecraftRegular;
+    font-size: 13px;
+}
+
+
 
 /* --- Import from API Popup --- */
 

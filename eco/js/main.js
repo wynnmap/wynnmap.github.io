@@ -259,6 +259,21 @@ function updateGuildEconomy() {
         }
     }
 
+    // Apply tributes
+    const tributes = guild.tributes || { sent: {}, received: {} };
+
+    for (const type in produced) {
+        // Add received tributes to production
+        if (tributes.received[type]) {
+            produced[type] += tributes.received[type];
+        }
+
+        // Add sent tributes to costs
+        if (tributes.sent[type]) {
+            costs[type] += tributes.sent[type];
+        }
+    }
+
     guild.produced = produced;
     guild.costs = costs;
     renderEconomySummary();
@@ -551,6 +566,66 @@ function showUpgradeTooltip(e, key, territory) {
     upgradesTooltip.style.display = "block";
 }
 
+
+window.openTributesPopup = function () {
+    const popup = document.getElementById("tributes-popup");
+    const sentDiv = document.getElementById("tribute-sent-inputs");
+    const recvDiv = document.getElementById("tribute-received-inputs");
+
+    sentDiv.innerHTML = "";
+    recvDiv.innerHTML = "";
+
+    for (const res in RESOURCE_EMOJIS) {
+        const emoji = RESOURCE_EMOJIS[res];
+
+        const makeRow = (type) => {
+            const row = document.createElement("div");
+            row.classList.add("tribute-row");
+
+            const label = document.createElement("div");
+            label.classList.add("tribute-label");
+            label.style.color = emoji.color;
+            label.innerHTML = `<span style="font-family: Icons;">${emoji.glyph}</span> - ${capitalize(res)}`;
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.classList.add("tribute-input");
+            input.value = guilds["Claim"].tributes?.[type]?.[res] ?? 0;
+            input.style.color = emoji.color;
+
+            input.addEventListener("input", () => {
+                const val = parseInt(input.value) || 0;
+                guilds["Claim"].tributes = guilds["Claim"].tributes || { sent: {}, received: {} };
+                guilds["Claim"].tributes[type][res] = val;
+                updateGuildEconomy();
+            });
+
+            row.appendChild(label);
+            row.appendChild(input);
+            return row;
+        };
+
+        sentDiv.appendChild(makeRow("sent"));
+        recvDiv.appendChild(makeRow("received"));
+    }
+
+    showVignette();
+    popup.style.animation = "fadeInUp 0.4s ease forwards";
+    popup.style.pointerEvents = "all";
+    popup.classList.remove('hidden');
+};
+
+document.getElementById("tributes-close").addEventListener("click", () => {
+    const popup = document.getElementById("tributes-popup");
+
+    hideVignette();
+    popup.style.animation = "fadeOutDown 0.4s ease forwards";
+    popup.style.pointerEvents = "none";
+    setTimeout(() => popup.classList.add('hidden'), 400);
+});
+
+
+
 window.exportMap = function () {
     const data = {
         territories: {},
@@ -668,6 +743,7 @@ window.resetAll = async function () {
     selectedTerritories = []
 
     territories = await fetchTerritories();
+    window.history.pushState({}, document.title, '/eco/');
     updateUI();
     render();
 };
