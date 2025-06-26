@@ -28,7 +28,24 @@ image.src = IMAGE_SRC;
 image.onload = async () => {
     ctx.imageSmoothingEnabled = false;
     territories = await fetchTerritories();
-    render();
+    
+    let alpha = 0;
+    const duration = 600; // in ms
+    const startTime = performance.now();
+
+    function step(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1); 
+        alpha = progress;
+
+        render(alpha);
+
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        }
+    }
+
+    requestAnimationFrame(step);
 
     setInterval(async () => {
         territories = await fetchTerritories();

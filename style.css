@@ -336,7 +336,7 @@ a:hover {
 }
 
 #vignette.exit {
-  animation: fadeOutVignette 0,8s ease forwards;
+  animation: fadeOutVignette 0.8s ease forwards;
 }
 
 button {
