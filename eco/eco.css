@@ -1,0 +1,390 @@
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(-40%); }
+  to   { opacity: 1; transform: translateY(-50%); }
+}
+
+@keyframes fadeOutDown {
+  from { opacity: 1; transform: translateY(-50%); }
+  to   { opacity: 0; transform: translateY(-40%); }
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: MinecraftRegular;
+    overflow: hidden;
+}
+
+#sidebar {
+    overflow-y: auto;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 15%;
+
+    font-family: MinecraftRegular;
+    color: #fff;
+    font-size: 14px;
+
+    background-color: black;
+    border: 2px solid black;
+    border-radius: 5px;
+    box-shadow: black 0 0 4px;
+    line-height: 1;
+    outline: 2px solid #2c075f;
+    outline-offset: -4px;
+    padding: 15px;
+
+    opacity: 0;
+    transform: translateX(50%);
+    animation: fadeInSlide 0.6s ease forwards;
+}
+
+#sidebar.exit {
+    animation: fadeOutSlide 0.6s ease forwards;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOutSlide {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(50%);
+    }
+}
+
+
+input[type="text"], input[type="color"], select, button {
+    font-family: MinecraftRegular;
+    font-size: 14px;
+    color: #ffffff;
+
+    background-color: #1c1c1c;
+    border: 2px solid #3f0a85;
+    border-radius: 6px;
+    outline: none;
+
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    width: 100%;
+
+    box-shadow: 0 0 5px rgba(60, 0, 100, 0.5);
+    transition: all 0.2s ease-in-out;
+
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="color"]:focus, select:focus, button:focus {
+    border-color: #a669ff;
+    box-shadow: 0 0 8px #a669ff;
+    background-color: #2a2a2a;
+}
+
+
+button {
+    background-color: #37005a;
+    border: 2px solid #6100b0;
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+button:hover {
+    background-color: #4b0091;
+    border-color: #a669ff;
+    color: #fff;
+}
+
+
+input[type="color"] {
+    padding: 0;
+    height: 32px;
+    width: 100%;
+    cursor: pointer;
+    border: 2px solid #3f0a85;
+    border-radius: 6px;
+    outline: none;
+    background: none;
+    border: none;
+}
+
+
+#selected-territory-list div {
+    background-color: #1f0037;
+    padding: 4px 8px;
+    margin-bottom: 3px;
+    border-left: 3px solid #a669ff;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+
+
+#popup-vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#popup-vignette.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+    pointer-events: all;
+}
+
+#popup-vignette.fade-out {
+    animation: fadeOut 0.4s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+
+
+#upgrades-popup {
+    position: fixed;
+    top: 50%;
+    width: 800px;
+    max-width: 70%;
+    margin-right: 15%;
+    max-width: 90vw;
+    border-radius: 10px;
+
+    background: #19002e; /* darker, deeper violet */
+    border: 2px solid #4c0a99;
+    box-shadow: 0 0 15px rgba(162, 107, 255, 0.25);
+    color: #e7d9ff;
+
+    z-index: 3;
+    font-family: MinecraftRegular;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-40%);
+}
+
+#upgrades-popup.hidden {
+    display: none;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    font-family: MinecraftBold;
+    font-size: 32px;
+    color: #d3a5ff;
+    margin-bottom: 32px;
+}
+
+.upgrades-row {
+    display: flex;
+    justify-content: left;
+    gap: 12px;
+    margin-top: 12px;
+    user-select: none;
+}
+
+.upgrades-grid {
+    margin: 12px;
+    user-select: none;
+}
+
+.upgrades-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #2c0049;
+    border: 2px solid #5f00b2;
+    border-radius: 6px;
+    transition: background-color 0.2s, border-color 0.2s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    image-rendering: pixelated;
+    cursor: pointer;
+}
+
+
+.upgrades-icon:hover {
+  background-color: #5a00a8;
+  border-color: #cc8cff;
+}
+
+
+.upgrades-icon img {
+    width: 64px;
+    height: 64px;
+    pointer-events: none;
+}
+
+.upgrades-icon::after {
+    content: attr(data-lvl);
+    font-family: MinecraftBold;
+    font-size: 18px;
+    color: white;
+    position: absolute;
+    bottom: 4px;
+    right: 8px;
+    pointer-events: none;
+}
+
+
+#upgrades-tooltip {
+    position: absolute;
+    background: rgba(15, 0, 25, 0.9);
+    border: 2px solid #5e23a3;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: MinecraftRegular;
+    font-size: 20px;
+    z-index: 10000;
+    pointer-events: none;
+    display: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    color: white;
+    line-height: 1.4;
+}
+
+#tooltip-title {
+    font-family: MinecraftBold;
+    color: #ff8cff;
+    margin-bottom: 4px;
+}
+
+#tooltip-cost {
+    margin: 12px 0 8px;
+}
+
+#tooltip-instructions {
+    font-size: 16px;
+    color: #ccc;
+    margin-top: 12px;
+}
+
+.popup-close {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    font-family: MinecraftBold;
+    transition: transform 0.2s ease;
+}
+
+.popup-close:hover {
+  transform: scale(1.4);
+}
+
+
+
+
+
+/* --- Economy Toggle Switch --- */
+
+#economy-toggle {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#toggle-switch {
+    display: inline-flex;
+    background-color: #2b0045;
+    border: 2px solid #5f00b2;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    font-family: MinecraftRegular;
+    font-size: 14px;
+    width: 180px;
+    height: 30px;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 12px;
+    overflow: visible;
+}
+
+#toggle-switch span {
+    flex: 1;
+    text-align: center;
+    z-index: 1;
+    color: #aaa;
+    user-select: none;
+}
+
+#toggle-slider {
+    position: absolute;
+    width: 50%;
+    height: 115%;
+    background-color: #4b0091;
+    border: 2px solid #a669ff;
+    border-radius: 6px;
+    top: -2px;
+    left: 0;
+    transition: left 0.3s;
+    z-index: 0;
+}
+
+#toggle-switch.active #toggle-slider {
+    left: 50%;
+}
+
+#toggle-switch.active #toggle-summary {
+    color: #aaa;
+}
+
+#toggle-switch.active #toggle-detail {
+    color: white;
+}
+
+#toggle-switch:not(.active) #toggle-summary {
+    color: white;
+}
+
+
+#economy-summary {
+    font-family: MinecraftRegular;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ccc;
+    text-align: left;
+    margin-left: 5px;
+}
+
+.util-high {
+    color: #ff5f5f !important;
+    font-weight: bold;
+}
+
+
+

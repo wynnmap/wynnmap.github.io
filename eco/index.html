@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wynncraft Live Territory Map</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="eco.css">
+</head>
+<body style="font: 16px MinecraftRegular;">
+    <div id="map-container">
+        <canvas id="mapCanvas"></canvas>
+        <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <div id="sidebar" class="sidebar">
+        <button onclick="backToHub()">Back to WynnMap Hub</button>
+        <hr style="border:0; border-top:1px solid #3f0a85; margin:6px 0;">
+
+        <h3>Guild Output:</h3>
+        <div id="economy-toggle">
+            <div id="toggle-switch">
+                <div id="toggle-slider"></div>
+                <span id="toggle-summary">Summary</span>
+                <span id="toggle-detail">Detail</span>
+            </div>
+        </div>
+
+        <div id="economy-summary" class="economy-view"></div>
+
+        <hr style="border:0; border-top:1px solid #3f0a85; margin:6px 0;">
+
+        <h3>Selected Territory:</h3>
+        <div id="selected-territory-list"></div>
+        <button onclick="removeSelectedTerritories()">Remove selection</button>
+        <button onclick="addToClaim()">Add to claim</button>
+        <button onclick="setHQ()">Set as HQ</button>
+
+        <hr style="border:0; border-top:1px solid #3f0a85; margin:6px 0;">
+
+        <h3>Tools</h3>
+        <button onclick="exportMap()">Export Map</button>
+
+        <input type="file" id="import-map-input" accept=".json" style="display: none;" onchange="handleImportMap(event)">
+        <button onclick="document.getElementById('import-map-input').click()">Import Map</button>
+        <button onclick="copyMapURL()">Copy Shareable URL</button>
+        <button onclick="resetMap()">Reset Map</button>
+        <button onclick="resetAll()">Reset All</button>
+
+    </div>
+
+    <div id="popup-vignette" class="hidden"></div>
+
+    <!-- Territory Upgrade Popup -->
+    <div id="upgrades-popup" class="hidden">
+        <div class="popup-inner">
+            <div class="popup-header">
+            <span id="upgrades-popup-title">Territory Upgrades</span>
+            <span class="popup-close" id="upgrades-close">x</span>
+            </div>
+            <div id="upgrades-grid"></div>
+        </div>
+    </div>
+
+    <!-- Tooltip for upgrade hover -->
+    <div id="upgrades-tooltip" class="hidden">
+        <div id="tooltip-title">Upgrade Name</div>
+        <div id="tooltip-effect">Effect</div>
+        <div id="tooltip-cost">Cost: 0</div>
+        <div id="tooltip-instructions">Left-Click to increase<br>Right-Click to decrease</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
