@@ -13,6 +13,8 @@ const upgradesGrid = document.getElementById('upgrades-grid');
 const upgradesTooltip = document.getElementById('upgrades-tooltip');
 const toggleSwitch = document.getElementById('toggle-switch');
 const economySummary = document.getElementById('economy-summary');
+const selectedTreasuryButton = document.getElementById("selectedTreasury");
+const selectedTreasuryDropdown = document.getElementById("selectedTreasuryOptions");
 
 let territories = [];
 let guilds =  {"None": {prefix: "None", name: "No one", color: "#ffffff"}, "Claim": {prefix: "Claim", name: "Claim", color: "#ff0000"}};
@@ -63,6 +65,7 @@ image.onload = async () => {
     }
 
     updateUI();
+    calculateDistances();
     updateGuildEconomy();
 
     let alpha = 0;
@@ -85,6 +88,7 @@ image.onload = async () => {
 
     setInterval(() => {
         updateGuildEconomy();
+        calculateDistances();
         render();
     }, 500);
 };
@@ -138,6 +142,24 @@ document.addEventListener("mousemove", (e) => {
     } else {
         handleHover(e);
     }
+});
+
+document.addEventListener("click", (e) => {
+    // Close if clicking outside
+    if (!selectedTreasuryDropdown.contains(e.target) && e.target !== selectedTreasuryButton) {
+        selectedTreasuryDropdown.classList.remove("open");
+    }
+});
+selectedTreasuryButton.addEventListener("click", () => {
+    selectedTreasuryDropdown.classList.toggle("open");
+});
+
+document.querySelectorAll("li").forEach((item) => {
+    item.addEventListener("click", () => {
+        const value = item.dataset.value;
+        setSelectedTreasury(value);
+        selectedTreasuryDropdown.classList.remove("open");
+    });
 });
 
 canvas.addEventListener("wheel", (e) => {
@@ -249,6 +271,40 @@ canvas.addEventListener('dblclick', e => {
 });
 
 // --- Eco Calculations ---
+
+function calculateDistances() {
+    const hqName = Object.values(guilds).find(g => g.prefix === "Claim")?.hq;
+    if (!hqName) return;
+    // 1. Fast lookup: name → territory object
+    const byName = Object.fromEntries(territories.map(t => [t.name, t]));
+
+
+    // Reset existing distance annotations if any
+    for (const t of territories) {
+        delete t.distanceFromHQ;
+    }
+
+    const visited = new Set([hqName]);
+    const queue = [{ name: hqName, dist: 0 }];
+
+    while (queue.length) {
+        const { name: current, dist } = queue.shift();
+        const node = byName[current];
+
+        // Annotate only claimed territories (including HQ if claimed)
+        if (node.guild === "Claim") {
+            node.distanceFromHQ = dist;
+        }
+
+        // Traverse neighbors
+        for (const neighbor of node.tradingRoutes || []) {
+            if (!byName[neighbor] || visited.has(neighbor)) continue;
+            visited.add(neighbor);
+            queue.push({ name: neighbor, dist: dist + 1 });
+        }
+    }
+}
+
 
 function updateGuildEconomy() {
     const guild = guilds["Claim"];
@@ -415,6 +471,11 @@ function renderEconomySummary() {
     economySummary.innerHTML = html.trim();
 }
 
+function setSelectedTreasury(value) {
+    for (const t of selectedTerritories) t.treasury = value;
+    updateGuildEconomy();
+}
+
 
 // --- Vignette Functions ---
 function showVignette() {
@@ -450,6 +511,8 @@ window.addToClaim = function () {
     }
     selectedTerritories = [];
     updateUI();
+    calculateDistances();
+    updateGuildEconomy();
     render();
 };
 
@@ -778,6 +841,7 @@ window.setHQ = async function () {
     guilds[hqTerritory.guild].hq = hqTerritory.name;
 
     selectedTerritories = [];
+    calculateDistances();
     updateUI();
     render();
 };

@@ -11,15 +11,16 @@ export async function fetchTerritories(import_guild) {
     const data = res.data.territories;
 
     let territories = terr_data;
-    let guilds = {}
+    let guilds = {};
 
     for (const name in territories) {
         const t = data[name];
-        territories[name].production = territories[name].resources
-        territories[name].upgrades = {}
+        territories[name].production = territories[name].resources;
+        territories[name].upgrades = {};
         for (const key in upgrades) {
            territories[name].upgrades[key] = 0;
         }
+        territories[name].treasury = "vlow";
         
         if (import_guild && t.guildPrefix === import_guild) {
             territories[name].guild = "Claim"

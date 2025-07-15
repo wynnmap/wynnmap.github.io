@@ -35,6 +35,16 @@
         <button onclick="removeSelectedTerritories()">Remove selection</button>
         <button onclick="addToClaim()">Add to claim</button>
         <button onclick="setHQ()">Set as HQ</button>
+        <div class="selection-wrapper" style="color:#000">
+            <button id="selectedTreasury">Set Treasury</button>
+            <ul class="treasury" id="selectedTreasuryOptions">
+            <li style="background-color: green;" data-value="vlow">Very Low
+            <li style="background-color: lightgreen;" data-value="low">Low
+            <li style="background-color: yellow;" data-value="med">Medium
+            <li style="background-color: red;" data-value="high">High
+            <li style="background-color: darkred;" data-value="vhigh">Very High
+            </ul>
+        </div>
 
         <hr style="border:0; border-top:1px solid #3f0a85; margin:6px 0;">
 

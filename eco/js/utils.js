@@ -15,6 +15,23 @@ export const RESOURCE_EMOJIS = {
     wood:     { glyph: "B", color: "#e89b00" }
 };
 
+export const TREASURY_CONVERSIONS = {
+    vlow: 0.0,
+    low: 0.10,
+    med: 0.20,
+    high: 0.25,
+    vhigh: 0.30,
+};
+
+export const DIFFICULTY_LABELS = {
+    vlow:  { label: "Very Low", color: "green" },
+    low:   { label: "Low", color: "lightgreen" },
+    med:   { label: "Medium", color: "yellow" },
+    high:  { label: "High", color: "red" },
+    vhigh: { label: "Very High", color: "darkred" },
+};
+
+
 
 
 export function capitalize(str) {
@@ -188,12 +205,18 @@ export function generateTooltip(t, guilds) {
 
     // Build type label dynamically
     let typeLabel = type.charAt(0).toUpperCase() + type.slice(1);  // Capitalize
+    let claimDetails = "";
+
+    if (t.guild == "Claim") {
+        claimDetails = `Treasury: <span style="color: ${DIFFICULTY_LABELS[t.treasury].color};">${DIFFICULTY_LABELS[t.treasury].label}</span> (${t.treasuryBonus*100}%)<br>`
+    }
 
     return `
         <div style="font-family: Minecraft, sans-serif; font-size: 16px;">
             <b style="font-family: MinecraftBold; font-size: 18px;">${t.name}</b><br>
-            Guild: <span style="color: ${guilds[t.guild].color};">${guilds[t.guild].name} [${t.guild}]</span><br>
+            Guild: <span style="color: ${guilds[t.guild].color};">${guilds[t.guild].name}</span><br>
             Type: ${typeLabel}<br>
+            ${claimDetails}
             Resources:<br>
             ${resourceLines}
         </div>
@@ -207,7 +230,6 @@ export function easeInOutQuad(t) {
 export function updateTerritory(territory) {
     const base = territory.resources;
     const upgradesData = territory.upgrades;
-    const treasuryBonus = 0; // Future feature
 
     const resEff = upgrades["efficientResources"].effects[upgradesData.efficientResources || 0];
     const resRate = upgrades["resourceRate"].effects[upgradesData.resourceRate || 0];
@@ -222,7 +244,21 @@ export function updateTerritory(territory) {
         emeralds: Math.round(base.emeralds * emeraldEff * (4 / emeraldRate))
     };
 
-    // Apply treasury bonus (currently 0%)
+    const tierKey = (territory.treasury || "");
+    console.log(tierKey)
+    const baseBonus = TREASURY_CONVERSIONS[tierKey] ?? 0;
+    console.log(baseBonus)
+    const distance = territory.distanceFromHQ ?? Infinity;
+    console.log(distance)
+
+    // Apply reduction based on distance
+    const reductionFactor = Math.max(0, distance - 2) * 0.15;
+    const treasuryBonus = Math.max(0, baseBonus * (1 - reductionFactor)) || 0;
+
+    // Store bonus on territory for reference/debugging
+    territory.treasuryBonus = treasuryBonus;
+
+    // Apply bonus to all production
     for (const key in adjusted) {
         adjusted[key] = Math.round(adjusted[key] * (1 + treasuryBonus));
     }

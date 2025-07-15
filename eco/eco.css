@@ -490,3 +490,56 @@ input[type="color"] {
 
 
 
+
+
+.selection-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+#selectedTreasury {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+#selectedTreasuryOptions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    list-style: none;
+    padding: 0;
+    background: #1a002c;
+    border: 2px solid #4c0a99;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 10;
+    font-family: MinecraftRegular;
+}
+
+#selectedTreasuryOptions.open {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+#selectedTreasuryOptions li {
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#selectedTreasuryOptions li:last-child {
+    border-bottom: none;
+}
+
+#selectedTreasuryOptions li:hover {
+    background-color: #30004d;
+    color: #fff;
+}
+
+
