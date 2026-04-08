@@ -2,6 +2,10 @@ import { upgrades } from '../../assets/terr_upgrades.js';
 
 const MAP_WIDTH = 1009;
 const MAP_HEIGHT = 1604;
+const WORLD_MIN_X = -2480;
+const WORLD_MIN_Z = -6578;
+const WORLD_MAX_X = 1650;
+const WORLD_MAX_Z = -159;
 
 export { MAP_WIDTH, MAP_HEIGHT };
 
@@ -97,11 +101,32 @@ export function fixHexCode(hex) {
     return `#${hex}`;
 }
 
+export function normalizeTerritoryName(name) {
+    return String(name || '')
+        .normalize('NFKD')
+        .toLowerCase()
+        .replace(/[\u2018\u2019']/g, '')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+}
+
 
 export function toCanvasCoords(x_ingame, z_ingame) {
-    const x_canvas = (x_ingame + 2382) * MAP_WIDTH / 4034;
-    const y_canvas = (z_ingame + 6572) * MAP_HEIGHT / 6414;
+    const x_canvas = (x_ingame - WORLD_MIN_X) * (MAP_WIDTH - 1) / (WORLD_MAX_X - WORLD_MIN_X);
+    const y_canvas = (z_ingame - WORLD_MIN_Z) * (MAP_HEIGHT - 1) / (WORLD_MAX_Z - WORLD_MIN_Z);
     return { x: x_canvas, y: y_canvas };
+}
+
+export function locationToRect(location) {
+    const topLeft = toCanvasCoords(location.startX, location.startZ);
+    const bottomRight = toCanvasCoords(location.endX, location.endZ);
+
+    return {
+        x: Math.min(topLeft.x, bottomRight.x),
+        y: Math.min(topLeft.y, bottomRight.y),
+        w: Math.abs(bottomRight.x - topLeft.x),
+        h: Math.abs(bottomRight.y - topLeft.y)
+    };
 }
 
 

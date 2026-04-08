@@ -1,4 +1,4 @@
-import { hexToRgba, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getFadeAlpha, getTerritoryType, hexToRgb, fixHexCode, shortenName } from './utils.js';
+import { hexToRgba, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getFadeAlpha, getTerritoryType, hexToRgb, fixHexCode, shortenName, normalizeTerritoryName } from './utils.js';
 const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
@@ -10,6 +10,9 @@ export function draw(ctx, canvas, mapImage, crownImage, territories, selectedTer
     ctx.drawImage(mapImage, 0, 0, MAP_WIDTH, MAP_HEIGHT);
 
     ctx.globalAlpha = globalAlpha;
+    const territoriesByName = new Map(
+        territories.map((territory) => [normalizeTerritoryName(territory.name), territory])
+    );
 
     // Determine line alpha based on zoom level
     let routeAlpha = (scale - 0.5) / (SHOW_NAME_THRESHOLD - 0.5);
@@ -22,7 +25,7 @@ export function draw(ctx, canvas, mapImage, crownImage, territories, selectedTer
         const centerY1 = t.rect.y + t.rect.h / 2;
 
         for (const destName of t.tradingRoutes) {
-            const dest = territories.find(tt => tt.name === destName);
+            const dest = territoriesByName.get(normalizeTerritoryName(destName));
             if (!dest) continue; // ignore invalid destinations
 
             const centerX2 = dest.rect.x + dest.rect.w / 2;

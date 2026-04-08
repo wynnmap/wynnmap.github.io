@@ -15,7 +15,7 @@ document.querySelectorAll('.button').forEach(btn => {
 });
 
 
-const MAP_WIDTH = 1009;
+const MAP_WIDTH = 1032;
 const MAP_HEIGHT = 1604;
 
 const mapImg = document.getElementById("map-img");

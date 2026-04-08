@@ -1,5 +1,5 @@
 import { fetchGuilds, fetchTerritories } from './api.js';
-import { generateTooltip, MAP_WIDTH, MAP_HEIGHT, easeInOutQuad, updateTerritory, RESOURCE_EMOJIS, capitalize } from './utils.js';
+import { generateTooltip, MAP_WIDTH, MAP_HEIGHT, easeInOutQuad, updateTerritory, RESOURCE_EMOJIS, capitalize, normalizeTerritoryName } from './utils.js';
 import { upgrades } from '../../assets/terr_upgrades.js';
 import { draw } from './draw.js';
 
@@ -37,6 +37,57 @@ let dragStartY = 0;
 const params = new URLSearchParams(window.location.search);
 const encodedData = params.get("data");
 
+function buildSnapshotData() {
+    const data = {
+        territories: {},
+        guilds
+    };
+
+    for (const t of territories) {
+        data.territories[t.name] = {
+            guild: t.guild,
+            treasury: t.treasury,
+            upgrades: { ...(t.upgrades || {}) }
+        };
+    }
+
+    return data;
+}
+
+function applySnapshotData(data) {
+    const decoded = data || {};
+    guilds = decoded.guilds || guilds;
+
+    const territoryState = decoded.territories || {};
+    for (const t of territories) {
+        const state = territoryState[t.name];
+
+        if (!state) {
+            t.guild = "None";
+            continue;
+        }
+
+        // Backward compatibility: old payloads stored only guild prefix string.
+        if (typeof state === "string") {
+            t.guild = state;
+            continue;
+        }
+
+        t.guild = state.guild || "None";
+
+        if (state.treasury) {
+            t.treasury = state.treasury;
+        }
+
+        if (state.upgrades && typeof state.upgrades === "object") {
+            for (const key in upgrades) {
+                const level = Number(state.upgrades[key]);
+                t.upgrades[key] = Number.isFinite(level) ? Math.max(0, level) : 0;
+            }
+        }
+    }
+}
+
 let image = new Image();
 image.src = "../assets/map.png";
 
@@ -51,14 +102,7 @@ image.onload = async () => {
         try {
             const json = LZString.decompressFromEncodedURIComponent(encodedData);
             const decoded = JSON.parse(json);
-
-            guilds = decoded.guilds || {};
-
-            for (const t of territories) {
-                if (decoded.territories && decoded.territories[t.name]) {
-                    t.guild = decoded.territories[t.name];
-                }
-            }
+            applySnapshotData(decoded);
         } catch (e) {
             console.error("Failed to parse URL data", e);
         }
@@ -275,8 +319,8 @@ canvas.addEventListener('dblclick', e => {
 function calculateDistances() {
     const hqName = Object.values(guilds).find(g => g.prefix === "Claim")?.hq;
     if (!hqName) return;
-    // 1. Fast lookup: name → territory object
-    const byName = Object.fromEntries(territories.map(t => [t.name, t]));
+    const byName = new Map(territories.map(t => [normalizeTerritoryName(t.name), t]));
+    const hqKey = normalizeTerritoryName(hqName);
 
 
     // Reset existing distance annotations if any
@@ -284,12 +328,13 @@ function calculateDistances() {
         delete t.distanceFromHQ;
     }
 
-    const visited = new Set([hqName]);
-    const queue = [{ name: hqName, dist: 0 }];
+    const visited = new Set([hqKey]);
+    const queue = [{ key: hqKey, dist: 0 }];
 
     while (queue.length) {
-        const { name: current, dist } = queue.shift();
-        const node = byName[current];
+        const { key: current, dist } = queue.shift();
+        const node = byName.get(current);
+        if (!node) continue;
 
         // Annotate only claimed territories (including HQ if claimed)
         if (node.guild === "Claim") {
@@ -298,9 +343,10 @@ function calculateDistances() {
 
         // Traverse neighbors
         for (const neighbor of node.tradingRoutes || []) {
-            if (!byName[neighbor] || visited.has(neighbor)) continue;
-            visited.add(neighbor);
-            queue.push({ name: neighbor, dist: dist + 1 });
+            const neighborKey = normalizeTerritoryName(neighbor);
+            if (!byName.has(neighborKey) || visited.has(neighborKey)) continue;
+            visited.add(neighborKey);
+            queue.push({ key: neighborKey, dist: dist + 1 });
         }
     }
 }
@@ -707,14 +753,7 @@ document.getElementById("tributes-close").addEventListener("click", () => {
 
 
 window.exportMap = function () {
-    const data = {
-        territories: {},
-        guilds
-    };
-
-    for (const t of territories) {
-        data.territories[t.name] = t.guild;
-    }
+    const data = buildSnapshotData();
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -736,19 +775,11 @@ window.handleImportMap = function (event) {
         try {
             const data = JSON.parse(e.target.result);
 
-            guilds = data.guilds || {};
-
-            // Apply ownership to existing territories
-            const ownership = data.territories || {};
-            for (const t of territories) {
-                if (ownership[t.name]) {
-                    t.guild = ownership[t.name];
-                } else {
-                    t.guild = "None";
-                }
-            }
+            applySnapshotData(data);
 
             updateUI();
+            calculateDistances();
+            updateGuildEconomy();
             render();
         } catch (err) {
             alert("Failed to load map data.");
@@ -759,14 +790,7 @@ window.handleImportMap = function (event) {
 };
 
 window.copyMapURL = function () {
-    const data = {
-        territories: {},
-        guilds
-    };
-
-    for (const t of territories) {
-        data.territories[t.name] = t.guild;
-    }
+    const data = buildSnapshotData();
 
     const encoded = JSON.stringify(data);
     const compressed = LZString.compressToEncodedURIComponent(encoded);
@@ -799,11 +823,11 @@ window.importFromAPI = async function () {
 document.getElementById("import-close").addEventListener("click", closeImportPopup);
 document.getElementById("import-confirm").addEventListener("click", async () => {
     const prefix = document.getElementById("import-select").value;
-    const territories = await fetchTerritories(prefix);
-
-    window.territories = territories;
+    territories = await fetchTerritories(prefix);
 
     updateUI();
+    calculateDistances();
+    updateGuildEconomy();
     render();
     closeImportPopup();
 });

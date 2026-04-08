@@ -1,4 +1,4 @@
-import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor, getFadeAlpha, getTerritoryType, hexToRgb, fixHexCode } from './utils.js';
+import { hexToRgba, getTimeDiffString, MAP_WIDTH, MAP_HEIGHT, drawOutlinedText, getTreasuryColor, getFadeAlpha, getTerritoryType, hexToRgb, fixHexCode, normalizeTerritoryName } from './utils.js';
 const SHOW_INFO_THRESHOLD = 2.3;
 const SHOW_NAME_THRESHOLD = 1.0;
 
@@ -16,6 +16,10 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale, g
     const showTimeHeld = document.getElementById("toggle-timeheld").checked;
 
     if (showConnections) {
+        const territoriesByName = new Map(
+            territories.map((territory) => [normalizeTerritoryName(territory.name), territory])
+        );
+
         // Determine line alpha based on zoom level
         let routeAlpha = (scale - 0.5) / (SHOW_NAME_THRESHOLD - 0.5);
         routeAlpha = Math.max(0, Math.min(1, routeAlpha));  // clamp between 0 and 1
@@ -27,7 +31,7 @@ export function draw(ctx, canvas, image, territories, offsetX, offsetY, scale, g
             const centerY1 = t.rect.y + t.rect.h / 2;
 
             for (const destName of t.tradingRoutes) {
-                const dest = territories.find(tt => tt.name === destName);
+                const dest = territoriesByName.get(normalizeTerritoryName(destName));
                 if (!dest) continue; // ignore invalid destinations
 
                 const centerX2 = dest.rect.x + dest.rect.w / 2;
